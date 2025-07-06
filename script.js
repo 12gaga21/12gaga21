@@ -467,127 +467,68 @@ function castSpell(spell) {
             enableActionButtons(); // Re-enable if game over
         }
     }, 700); // Duration for casting animation and effect display
+    // Note: The duplicated block of battle logic functions that was here previously has been removed.
+    // The game will now use the versions of playerAttack, playerDefend, enemyTurn, castSpell, etc.,
+    // that include animation logic.
+    // The duplicated offerRestart and restartGame functions were also removed as they are
+    // part of the older logic block that was causing conflicts.
+    // The enable/disableActionButtons and checkGameOver functions are now defined only once
+    // with the animation-aware logic.
+
+    // Ensure `offerRestart` is correctly defined if it's meant to be used with the new logic.
+    // For now, let's assume the game over check in the new logic handles button states,
+    // and restart might need a dedicated button or a clearer trigger if gameIsOver is true.
+    // The new checkGameOver already calls disableActionButtons.
+    // If a restart button is desired, it should be added explicitly when gameIsOver is true.
+}
+
+function offerRestart() {
+    if (!document.querySelector('#restart-button')) { // Prevent multiple restart buttons
+        const restartButton = document.createElement('button');
+        restartButton.id = 'restart-button';
+        restartButton.textContent = 'Начать заново';
+        restartButton.onclick = restartGame;
+        actionsMenu.appendChild(restartButton);
     }
 }
 
-function playerDefend() {
-    if (gameIsOver || currentTurn !== 'player') return;
-    player.isDefending = true;
-    player.logMessage(`${player.name} готовится к защите!`);
-    currentTurn = 'enemy';
-    setTimeout(enemyTurn, 1000);
-}
+function restartGame() {
+    player.hp = player.maxHp;
+    player.mp = player.maxMp;
+    player.isDefending = false;
+    enemy.hp = enemy.maxHp;
+    enemy.mp = enemy.maxMp;
 
-function enemyTurn() {
-    if (gameIsOver || currentTurn !== 'enemy') return;
-    enemy.performAction(player); // Enemy AI decides action
-    checkGameOver();
-    if (!gameIsOver) {
-        currentTurn = 'player';
-        player.isDefending = false; // Player's defense stance resets at the start of their turn
-        enableActionButtons();
+    gameIsOver = false;
+    currentTurn = 'player';
+
+    messageLog.innerHTML = '<p>Новая битва начинается!</p>';
+    logMessageToScreen("Игра перезапущена.");
+
+    player.updateUI();
+    enemy.updateUI();
+    initialUISetup();
+
+    enableActionButtons();
+
+    const restartButton = document.getElementById('restart-button');
+    if (restartButton) {
+        restartButton.remove();
     }
 }
 
+// checkGameOver function needs to be available for the new logic flow
 function checkGameOver() {
     if (player.hp <= 0) {
         logMessageToScreen(`${player.name} был повержен! Игра окончена.`);
         gameIsOver = true;
         disableActionButtons();
+        offerRestart(); // Offer restart when game is over
     } else if (enemy.hp <= 0) {
         logMessageToScreen(`${enemy.name} был повержен! ${player.name} победил!`);
         gameIsOver = true;
         disableActionButtons();
+        offerRestart(); // Offer restart when game is over
     }
 }
-
-function disableActionButtons() {
-    attackButton.disabled = true;
-    magicButton.disabled = true;
-    defendButton.disabled = true;
-    magicMenuElement.classList.add('hidden'); // Hide magic menu too
-    document.getElementById('actions-menu').classList.remove('hidden'); // Ensure actions menu is visible if magic was open
-}
-
-function enableActionButtons() {
-    attackButton.disabled = false;
-    magicButton.disabled = false;
-    defendButton.disabled = false;
-}
-
-
-// --- Event Listeners ---
-attackButton.addEventListener('click', playerAttack);
-defendButton.addEventListener('click', playerDefend);
-magicButton.addEventListener('click', () => {
-    if (gameIsOver || currentTurn !== 'player') return;
-    toggleMagicMenu();
-});
-
-// Override castSpell to integrate with battle flow
-function castSpell(spell) {
-    if (gameIsOver || currentTurn !== 'player' || !player.consumeMp(spell.cost)) {
-        if (player.mp < spell.cost) {
-             player.logMessage(`${player.name} не хватает маны для ${spell.name}.`);
-        }
-        toggleMagicMenu(); // Hide menu even if spell fails due to mana
-        return;
-    }
-
-    player.logMessage(`${player.name} использует ${spell.name}!`);
-    if (spell.type === 'damage') {
-        enemy.takeDamage(spell.effect + Math.floor(player.attack / 3)); // Add a small portion of attack to spell damage
-    } else if (spell.type === 'heal') {
-        player.heal(spell.effect);
-    }
-
-    toggleMagicMenu(); // Hide magic menu after casting
-    checkGameOver();
-    if (!gameIsOver) {
-        currentTurn = 'enemy';
-        setTimeout(enemyTurn, 1000);
-    } else {
-        // Offer to restart the game if it's over
-        offerRestart();
-    }
-}
-
-function offerRestart() {
-    const restartButton = document.createElement('button');
-    restartButton.textContent = 'Начать заново';
-    restartButton.onclick = restartGame;
-    // Add it to a suitable place, e.g., action menu or message log
-    const actionsMenu = document.getElementById('actions-menu');
-    actionsMenu.appendChild(restartButton); // Or messageLog.appendChild(restartButton);
-}
-
-function restartGame() {
-    // Reset character stats
-    player.hp = player.maxHp;
-    player.mp = player.maxMp;
-    player.isDefending = false;
-    enemy.hp = enemy.maxHp; // Assuming enemy has maxHp defined, or reset to initial HP
-    enemy.mp = enemy.maxMp; // Assuming enemy has maxMp defined, or reset to initial MP
-
-    // Reset game state
-    gameIsOver = false;
-    currentTurn = 'player';
-
-    // Clear message log
-    messageLog.innerHTML = '<p>Новая битва начинается!</p>';
-
-    // Update UI
-    player.updateUI();
-    enemy.updateUI();
-    initialUISetup(); // Re-populate magic menu in case it was modified or for future features
-
-    // Re-enable action buttons
-    enableActionButtons();
-
-    // Remove restart button
-    const existingRestartButton = document.querySelector('#actions-menu button:last-child'); // Be more specific if needed
-    if (existingRestartButton && existingRestartButton.textContent === 'Начать заново') {
-        existingRestartButton.remove();
-    }
-    logMessageToScreen("Игра перезапущена.");
-}
+// disableActionButtons and enableActionButtons are defined above with animation logic, so they are fine.
