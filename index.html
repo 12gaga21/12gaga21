@@ -10,14 +10,16 @@
     <div id="game-container">
         <div id="battle-screen">
             <div id="player-character" class="character">
-                <p>Игрок</p>
-                <p>HP: <span id="player-hp">100</span></p>
-                <p>MP: <span id="player-mp">50</span></p>
+                <img id="player-sprite" class="character-sprite" src="https://via.placeholder.com/96x96/008000/FFFFFF?text=Player" alt="Player Sprite">
+                <div class="stats-bar">HP: <div class="bar" id="player-hp-bar"><span id="player-hp">100</span></div></div>
+                <div class="stats-bar">MP: <div class="bar" id="player-mp-bar"><span id="player-mp">50</span></div></div>
+                <div class="effect-container" id="player-effect-container"></div>
             </div>
             <div id="enemy-character" class="character">
-                <p>Враг</p>
-                <p>HP: <span id="enemy-hp">80</span></p>
-                <p>MP: <span id="enemy-mp">30</span></p>
+                <img id="enemy-sprite" class="character-sprite" src="https://via.placeholder.com/96x96/FF0000/FFFFFF?text=Enemy" alt="Enemy Sprite">
+                <div class="stats-bar">HP: <div class="bar" id="enemy-hp-bar"><span id="enemy-hp">80</span></div></div>
+                <div class="stats-bar">MP: <div class="bar" id="enemy-mp-bar"><span id="enemy-mp">30</span></div></div>
+                <div class="effect-container" id="enemy-effect-container"></div>
             </div>
         </div>
         <div id="message-log">
