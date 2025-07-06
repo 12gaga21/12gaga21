@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Fantasy Style RPG</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="battle-screen">
+            <div id="player-character" class="character">
+                <p>Игрок</p>
+                <p>HP: <span id="player-hp">100</span></p>
+                <p>MP: <span id="player-mp">50</span></p>
+            </div>
+            <div id="enemy-character" class="character">
+                <p>Враг</p>
+                <p>HP: <span id="enemy-hp">80</span></p>
+                <p>MP: <span id="enemy-mp">30</span></p>
+            </div>
+        </div>
+        <div id="message-log">
+            <p>Битва начинается!</p>
+        </div>
+        <div id="actions-menu">
+            <button id="attack-button">Атака</button>
+            <button id="magic-button">Магия</button>
+            <button id="defend-button">Защита</button>
+        </div>
+        <div id="magic-menu" class="hidden">
+            <!-- Сюда будут добавляться заклинания -->
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
