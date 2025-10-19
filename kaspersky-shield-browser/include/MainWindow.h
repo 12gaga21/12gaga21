@@ -32,6 +32,7 @@ class ProfileManager;
 class AddressBar;
 class KsnClient;
 class DatabaseManager;
+class ThemeManager;
 
 class MainWindow : public QMainWindow
 {
@@ -69,6 +70,7 @@ private slots:
     void onLoadFinished(bool success);
     void onLoadStarted();
     void onLoadProgress(int progress);
+    void toggleTheme();
 
 private:
     void setupUI();
@@ -100,6 +102,7 @@ private:
     // Core components
     KsnClient *m_ksnClient;
     DatabaseManager *m_databaseManager;
+    ThemeManager *m_themeManager;
     
     // Managers
     SecurityManager *m_securityManager;

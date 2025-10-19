@@ -23,6 +23,7 @@ set(SOURCES
     src/KsnClient.cpp
     src/AddressBar.cpp
     src/ProfileManager.cpp
+    src/ThemeManager.cpp
     src/SecuritySettingsDialog.cpp
     src/ProfileManagerDialog.cpp
     src/ParentalControlDialog.cpp
@@ -37,6 +38,7 @@ set(HEADERS
     include/KsnClient.h
     include/AddressBar.h
     include/ProfileManager.h
+    include/ThemeManager.h
     include/SecuritySettingsDialog.h
     include/ProfileManagerDialog.h
     include/ParentalControlDialog.h

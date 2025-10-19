@@ -5,6 +5,7 @@
 #include "ProfileManager.h"
 #include "KsnClient.h"
 #include "DatabaseManager.h"
+#include "ThemeManager.h"
 #include "SecuritySettingsDialog.h"
 #include "ProfileManagerDialog.h"
 #include "ParentalControlDialog.h"
@@ -46,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_statusLabel(nullptr)
     , m_ksnClient(nullptr)
     , m_databaseManager(nullptr)
+    , m_themeManager(nullptr)
     , m_securityManager(nullptr)
     , m_parentalControlManager(nullptr)
     , m_profileManager(nullptr)
@@ -53,7 +55,11 @@ MainWindow::MainWindow(QWidget *parent)
     , m_webProfile(nullptr)
     , m_isLoading(false)
 {
-    // Initialize all components first
+    // Initialize theme first
+    m_themeManager = new ThemeManager(this);
+    m_themeManager->loadSavedTheme();
+    
+    // Initialize all components
     initializeComponents();
     
     // Setup UI
@@ -68,14 +74,17 @@ MainWindow::MainWindow(QWidget *parent)
     connectComponents();
     
     // Set window properties
-    setWindowTitle("Kaspersky Home Shield Browser - Защищенный браузер");
+    setWindowTitle("Kaspersky Home Shield Browser - Современный защищенный браузер");
     setMinimumSize(1024, 768);
     resize(1200, 800);
+    
+    // Apply modern window flags
+    setWindowFlag(Qt::FramelessWindowHint, false);
     
     // Load initial page
     createNewTab("https://www.kaspersky.com");
     
-    qDebug() << "MainWindow initialized successfully";
+    qDebug() << "MainWindow initialized successfully with modern design";
 }
 
 MainWindow::~MainWindow()
@@ -212,55 +221,88 @@ void MainWindow::setupToolBar()
 {
     QToolBar *toolBar = addToolBar("Main Toolbar");
     toolBar->setMovable(false);
+    toolBar->setObjectName("mainToolBar");
     
-    // Navigation buttons
-    m_backButton = new QPushButton("←", this);
-    m_backButton->setToolTip("Go Back");
+    // Navigation buttons (modern icons)
+    m_backButton = new QPushButton("◀", this);
+    m_backButton->setToolTip("Назад (Alt+←)");
     m_backButton->setEnabled(false);
+    m_backButton->setFixedSize(44, 44);
+    m_backButton->setStyleSheet("QPushButton { font-size: 18px; }");
     toolBar->addWidget(m_backButton);
     
-    m_forwardButton = new QPushButton("→", this);
-    m_forwardButton->setToolTip("Go Forward");
+    m_forwardButton = new QPushButton("▶", this);
+    m_forwardButton->setToolTip("Вперед (Alt+→)");
     m_forwardButton->setEnabled(false);
+    m_forwardButton->setFixedSize(44, 44);
+    m_forwardButton->setStyleSheet("QPushButton { font-size: 18px; }");
     toolBar->addWidget(m_forwardButton);
     
     m_refreshButton = new QPushButton("↻", this);
-    m_refreshButton->setToolTip("Refresh");
+    m_refreshButton->setToolTip("Обновить (F5)");
+    m_refreshButton->setFixedSize(44, 44);
+    m_refreshButton->setStyleSheet("QPushButton { font-size: 20px; }");
     toolBar->addWidget(m_refreshButton);
     
-    m_stopButton = new QPushButton("⏹", this);
-    m_stopButton->setToolTip("Stop");
+    m_stopButton = new QPushButton("✕", this);
+    m_stopButton->setToolTip("Остановить");
     m_stopButton->setVisible(false);
+    m_stopButton->setFixedSize(44, 44);
+    m_stopButton->setStyleSheet("QPushButton { font-size: 18px; color: #FF4757; }");
     toolBar->addWidget(m_stopButton);
     
     toolBar->addSeparator();
     
-    // Address bar
+    // Address bar (modern omnibox)
     m_addressBar = new AddressBar(this);
-    m_addressBar->setPlaceholderText("Enter URL or search term...");
+    m_addressBar->setObjectName("addressBar");
+    m_addressBar->setPlaceholderText("🔍 Поиск или введите URL...");
+    m_addressBar->setMinimumWidth(400);
     toolBar->addWidget(m_addressBar);
     
     toolBar->addSeparator();
     
-    // New tab button
-    m_newTabButton = new QPushButton("+", this);
-    m_newTabButton->setToolTip("New Tab");
+    // New tab button (modern)
+    m_newTabButton = new QPushButton("➕", this);
+    m_newTabButton->setToolTip("Новая вкладка (Ctrl+T)");
+    m_newTabButton->setFixedSize(44, 44);
+    m_newTabButton->setStyleSheet("QPushButton { font-size: 18px; }");
     toolBar->addWidget(m_newTabButton);
     
     toolBar->addSeparator();
     
-    // Security and control buttons
-    m_securityButton = new QPushButton("🛡️ Security", this);
-    m_securityButton->setToolTip("Security Status");
+    // Security button (modern)
+    m_securityButton = new QPushButton("🔒", this);
+    m_securityButton->setToolTip("Настройки безопасности");
+    m_securityButton->setFixedSize(44, 44);
+    m_securityButton->setStyleSheet("QPushButton { font-size: 20px; }");
     toolBar->addWidget(m_securityButton);
     
-    m_parentalControlButton = new QPushButton("👨‍👩‍👧‍👦 Parental Control", this);
-    m_parentalControlButton->setToolTip("Parental Control Settings");
+    // Parental control button (modern)
+    m_parentalControlButton = new QPushButton("🔐", this);
+    m_parentalControlButton->setToolTip("Родительский контроль");
+    m_parentalControlButton->setFixedSize(44, 44);
+    m_parentalControlButton->setStyleSheet("QPushButton { font-size: 20px; }");
     toolBar->addWidget(m_parentalControlButton);
     
-    m_profileButton = new QPushButton("👤 Profile", this);
-    m_profileButton->setToolTip("Profile Manager");
+    // Profile button (modern)
+    m_profileButton = new QPushButton("👤", this);
+    m_profileButton->setToolTip("Управление профилями");
+    m_profileButton->setFixedSize(44, 44);
+    m_profileButton->setStyleSheet("QPushButton { font-size: 20px; }");
     toolBar->addWidget(m_profileButton);
+    
+    toolBar->addSeparator();
+    
+    // Theme toggle button (NEW!)
+    QPushButton *themeButton = new QPushButton("🌓", this);
+    themeButton->setToolTip("Переключить тему");
+    themeButton->setFixedSize(44, 44);
+    themeButton->setStyleSheet("QPushButton { font-size: 20px; }");
+    connect(themeButton, &QPushButton::clicked, this, &MainWindow::toggleTheme);
+    toolBar->addWidget(themeButton);
+    
+    qDebug() << "Modern toolbar with theme switcher created";
 }
 
 void MainWindow::setupStatusBar()
@@ -704,4 +746,26 @@ void MainWindow::connectComponents()
     });
     
     qDebug() << "All component signals connected";
+}
+
+void MainWindow::toggleTheme()
+{
+    if (m_themeManager) {
+        m_themeManager->toggleTheme();
+        qDebug() << "Theme toggled to:" << m_themeManager->currentThemeName();
+        
+        // Обновить тултип для кнопки темы
+        QString tooltip = m_themeManager->isDarkTheme() 
+            ? "Переключить на светлую тему" 
+            : "Переключить на темную тему";
+        
+        // Найти кнопку темы и обновить тултип
+        QList<QPushButton*> buttons = findChildren<QPushButton*>();
+        for (QPushButton *btn : buttons) {
+            if (btn->text() == "🌓") {
+                btn->setToolTip(tooltip);
+                break;
+            }
+        }
+    }
 }
