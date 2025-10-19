@@ -1,4 +1,5 @@
 #include "ParentalControlManager.h"
+#include "KsnClient.h"
 #include <QTimer>
 #include <QDateTime>
 #include <QTime>
@@ -7,6 +8,7 @@
 ParentalControlManager::ParentalControlManager(QObject *parent)
     : QObject(parent)
     , m_usageTimer(new QTimer(this))
+    , m_ksnClient(nullptr)
 {
     // Set up usage timer to update every minute
     m_usageTimer->setInterval(60000); // 1 minute
@@ -21,11 +23,26 @@ ParentalControlManager::ParentalControlManager(QObject *parent)
     parentProfile.timeLimitMinutes = 0; // No limit
     parentProfile.isActive = true;
     createProfile(parentProfile);
+    
+    qDebug() << "ParentalControlManager initialized";
 }
 
 ParentalControlManager::~ParentalControlManager()
 {
-    // Cleanup is handled by Qt's parent-child system
+    qDebug() << "ParentalControlManager destroyed";
+}
+
+bool ParentalControlManager::initialize(KsnClient *ksnClient)
+{
+    if (!ksnClient) {
+        qWarning() << "Cannot initialize ParentalControlManager: ksnClient is null";
+        return false;
+    }
+    
+    m_ksnClient = ksnClient;
+    
+    qDebug() << "ParentalControlManager initialized with KsnClient";
+    return true;
 }
 
 bool ParentalControlManager::createProfile(const UserProfile &profile)
@@ -314,4 +331,109 @@ void ParentalControlManager::logBlockedAccess(const QString &profileId, const QU
     
     logActivity(record);
     emit urlBlocked(profileId, url, record.blockReason);
+}
+
+QString ParentalControlManager::getUrlCategory(const QUrl &url)
+{
+    // Use KSN client to get category if available
+    if (m_ksnClient) {
+        auto category = m_ksnClient->getSiteCategory(url);
+        
+        // Convert KsnClient::SiteCategory to string
+        switch (category) {
+            case KsnClient::SiteCategory::Adult: return "Adult";
+            case KsnClient::SiteCategory::Gambling: return "Gambling";
+            case KsnClient::SiteCategory::Violence: return "Violence";
+            case KsnClient::SiteCategory::Drugs: return "Drugs";
+            case KsnClient::SiteCategory::Weapons: return "Weapons";
+            case KsnClient::SiteCategory::Education: return "Education";
+            case KsnClient::SiteCategory::Entertainment: return "Entertainment";
+            case KsnClient::SiteCategory::News: return "News";
+            case KsnClient::SiteCategory::Social: return "Social Media";
+            case KsnClient::SiteCategory::Shopping: return "Shopping";
+            default: return "General";
+        }
+    }
+    
+    // Fallback to basic categorization
+    QStringList categories = categorizeUrl(url);
+    return categories.isEmpty() ? "General" : categories.first();
+}
+
+bool ParentalControlManager::isCategorySafe(const QString &category, ProfileType profileType)
+{
+    // Define safe categories for each profile type
+    
+    if (profileType == ProfileType::Parent) {
+        return true; // All categories allowed for parents
+    }
+    
+    QStringList unsafeForChildren = {"Adult", "Violence", "Gambling", "Drugs", "Weapons", "Terrorism"};
+    QStringList unsafeForTeens = {"Adult", "Gambling", "Drugs", "Weapons", "Terrorism"};
+    
+    if (profileType == ProfileType::Child) {
+        return !unsafeForChildren.contains(category);
+    }
+    
+    if (profileType == ProfileType::Teen) {
+        return !unsafeForTeens.contains(category);
+    }
+    
+    return true;
+}
+
+void ParentalControlManager::setBlockedCategories(const QString &profileId, const QStringList &categories)
+{
+    if (!m_profiles.contains(profileId)) {
+        qWarning() << "Profile with ID" << profileId << "does not exist";
+        return;
+    }
+    
+    // Store blocked categories in profile
+    // This would be part of profile settings
+    qDebug() << "Set blocked categories for profile" << profileId << ":" << categories;
+    
+    emit profileUpdated(profileId);
+}
+
+void ParentalControlManager::clearActivityHistory(const QString &profileId)
+{
+    if (m_activityHistory.contains(profileId)) {
+        m_activityHistory[profileId].clear();
+        qDebug() << "Cleared activity history for profile:" << profileId;
+    }
+}
+
+void ParentalControlManager::setTimeLimit(const QString &profileId, int minutes)
+{
+    if (!m_profiles.contains(profileId)) {
+        qWarning() << "Profile with ID" << profileId << "does not exist";
+        return;
+    }
+    
+    m_profiles[profileId].timeLimitMinutes = minutes;
+    qDebug() << "Set time limit for profile" << profileId << "to" << minutes << "minutes";
+    
+    emit profileUpdated(profileId);
+}
+
+QStringList ParentalControlManager::getDefaultBlockedCategories(ProfileType profileType) const
+{
+    QStringList blocked;
+    
+    switch (profileType) {
+        case ProfileType::Child:
+            blocked << "Adult" << "Violence" << "Gambling" 
+                   << "Drugs" << "Weapons" << "Terrorism";
+            break;
+        case ProfileType::Teen:
+            blocked << "Adult" << "Gambling" << "Drugs" 
+                   << "Weapons" << "Terrorism";
+            break;
+        case ProfileType::Parent:
+            // No restrictions for parents
+            break;
+    }
+    
+    return blocked;
 }
