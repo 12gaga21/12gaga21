@@ -214,14 +214,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/lib/x86_64-linux-gnu/cmake/Qt6Sql/Qt6SqlTargets-none.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/Qt6Sql/Qt6SqlTargets.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/Qt6Sql/Qt6SqlVersionlessAliasTargets.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/Qt6Test/Qt6TestAdditionalTargetInfo.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/Qt6Test/Qt6TestConfig.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/Qt6Test/Qt6TestConfigVersion.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/Qt6Test/Qt6TestConfigVersionImpl.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/Qt6Test/Qt6TestDependencies.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/Qt6Test/Qt6TestTargets-none.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/Qt6Test/Qt6TestTargets.cmake"
-  "/usr/lib/x86_64-linux-gnu/cmake/Qt6Test/Qt6TestVersionlessAliasTargets.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/Qt6WebChannel/Qt6WebChannelAdditionalTargetInfo.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/Qt6WebChannel/Qt6WebChannelConfig.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/Qt6WebChannel/Qt6WebChannelConfigVersion.cmake"
@@ -321,7 +313,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/workspace/kaspersky-shield-browser/CMakeLists.txt"
   "CMakeFiles/3.31.6/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.31.6/CMakeSystem.cmake"
-  "/workspace/kaspersky-shield-browser/tests/CMakeLists.txt"
   )
 
 # The corresponding makefile is:
@@ -332,17 +323,15 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
+  "CMakeFiles/KasperskyShieldBrowser_autogen.dir/AutogenInfo.json"
   ".qt/QtDeploySupport.cmake"
   ".qt/QtDeployTargets.cmake"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
-  "tests/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/KasperskyShieldBrowser.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_security_manager.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_parental_control.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_database_manager.dir/DependInfo.cmake"
-  "tests/CMakeFiles/test_profile_manager.dir/DependInfo.cmake"
+  "CMakeFiles/KasperskyShieldBrowser_autogen_timestamp_deps.dir/DependInfo.cmake"
+  "CMakeFiles/KasperskyShieldBrowser_autogen.dir/DependInfo.cmake"
   )

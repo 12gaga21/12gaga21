@@ -8,12 +8,14 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QWebEngineView>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QLabel>
 #include <QProgressBar>
 #include <QTimer>
+#include <QWebEngineView>
+#include <QWebEnginePage>
+#include <QWebEngineProfile>
+#include <QWebEngineSettings>
+#include <QWebEngineHistory>
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 class QWebEngineView;
@@ -21,6 +23,7 @@ class QLineEdit;
 class QPushButton;
 class QLabel;
 class QProgressBar;
+class QTabWidget;
 QT_END_NAMESPACE
 
 class SecurityManager;
@@ -48,6 +51,15 @@ private slots:
     void showSecurityStatus();
     void showParentalControl();
     void showProfileManager();
+    void onTabCloseRequested(int index);
+    void onCurrentTabChanged(int index);
+    void onNewTabRequested();
+    void onDownloadRequested();
+    void onCertificateError();
+    void onUrlChanged(const QUrl &url);
+    void onLoadFinished(bool success);
+    void onLoadStarted();
+    void onLoadProgress(int progress);
 
 private:
     void setupUI();
@@ -55,6 +67,11 @@ private:
     void setupToolBar();
     void setupStatusBar();
     void setupConnections();
+    void setupWebEngine();
+    QWebEngineView* createNewTab(const QString &url = QString());
+    void closeTab(int index);
+    void updateNavigationButtons();
+    void checkUrlSecurity(const QUrl &url);
     
     // UI Components
     QTabWidget *m_tabWidget;
@@ -67,6 +84,7 @@ private:
     QPushButton *m_securityButton;
     QPushButton *m_parentalControlButton;
     QPushButton *m_profileButton;
+    QPushButton *m_newTabButton;
     QProgressBar *m_progressBar;
     QLabel *m_statusLabel;
     
@@ -77,6 +95,8 @@ private:
     
     // State
     QTimer *m_statusTimer;
+    QWebEngineProfile *m_webProfile;
+    bool m_isLoading;
 };
 
 #endif // MAINWINDOW_H

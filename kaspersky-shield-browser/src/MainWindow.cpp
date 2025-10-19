@@ -5,6 +5,9 @@
 #include "ProfileManager.h"
 #include <QApplication>
 #include <QWebEngineView>
+#include <QWebEnginePage>
+#include <QWebEngineProfile>
+#include <QWebEngineSettings>
 #include <QTabWidget>
 #include <QPushButton>
 #include <QProgressBar>
@@ -17,6 +20,8 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QDebug>
+#include <QNetworkReply>
+#include <QUrl>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,13 +35,17 @@ MainWindow::MainWindow(QWidget *parent)
     , m_securityButton(nullptr)
     , m_parentalControlButton(nullptr)
     , m_profileButton(nullptr)
+    , m_newTabButton(nullptr)
     , m_progressBar(nullptr)
     , m_statusLabel(nullptr)
     , m_securityManager(nullptr)
     , m_parentalControlManager(nullptr)
     , m_profileManager(nullptr)
     , m_statusTimer(nullptr)
+    , m_webProfile(nullptr)
+    , m_isLoading(false)
 {
+    setupWebEngine();
     setupUI();
     setupMenuBar();
     setupToolBar();
@@ -54,17 +63,48 @@ MainWindow::MainWindow(QWidget *parent)
     resize(1200, 800);
     
     // Create initial tab
-    QWebEngineView *webView = new QWebEngineView(this);
-    m_tabWidget->addTab(webView, "New Tab");
-    m_currentWebView = webView;
-    
-    // Load default page
-    webView->load(QUrl("https://www.kaspersky.com"));
+    createNewTab("https://www.kaspersky.com");
 }
 
 MainWindow::~MainWindow()
 {
     // Cleanup is handled by Qt's parent-child system
+}
+
+void MainWindow::setupWebEngine()
+{
+    // Create web profile with security settings
+    m_webProfile = QWebEngineProfile::defaultProfile();
+    
+    // Configure security settings
+    QWebEngineSettings *settings = m_webProfile->settings();
+    settings->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
+    settings->setAttribute(QWebEngineSettings::PluginsEnabled, false);
+    settings->setAttribute(QWebEngineSettings::AutoLoadImages, true);
+    settings->setAttribute(QWebEngineSettings::JavascriptCanOpenWindows, false);
+    settings->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, false);
+    settings->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, false);
+    settings->setAttribute(QWebEngineSettings::LocalContentCanAccessFileUrls, false);
+    settings->setAttribute(QWebEngineSettings::XSSAuditingEnabled, true);
+    settings->setAttribute(QWebEngineSettings::ErrorPageEnabled, true);
+    settings->setAttribute(QWebEngineSettings::WebGLEnabled, false);
+    settings->setAttribute(QWebEngineSettings::Accelerated2dCanvasEnabled, false);
+    settings->setAttribute(QWebEngineSettings::PrintElementBackgrounds, false);
+    settings->setAttribute(QWebEngineSettings::AllowRunningInsecureContent, false);
+    settings->setAttribute(QWebEngineSettings::AllowGeolocationOnInsecureOrigins, false);
+    settings->setAttribute(QWebEngineSettings::AllowWindowActivationFromJavaScript, false);
+    settings->setAttribute(QWebEngineSettings::ShowScrollBars, true);
+    settings->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, true);
+    settings->setAttribute(QWebEngineSettings::JavascriptCanPaste, false);
+    settings->setAttribute(QWebEngineSettings::WebRTCPublicInterfacesOnly, true);
+    settings->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, false);
+    settings->setAttribute(QWebEngineSettings::PdfViewerEnabled, true);
+    settings->setAttribute(QWebEngineSettings::ScreenCaptureEnabled, false);
+    settings->setAttribute(QWebEngineSettings::AutoLoadIconsForPage, false);
+    settings->setAttribute(QWebEngineSettings::TouchIconsEnabled, false);
+    settings->setAttribute(QWebEngineSettings::FocusOnNavigationEnabled, true);
+    settings->setAttribute(QWebEngineSettings::HyperlinkAuditingEnabled, false);
+    settings->setAttribute(QWebEngineSettings::LocalStorageEnabled, true);
 }
 
 void MainWindow::setupUI()
@@ -82,27 +122,12 @@ void MainWindow::setupUI()
     m_tabWidget = new QTabWidget(this);
     m_tabWidget->setTabsClosable(true);
     m_tabWidget->setMovable(true);
+    m_tabWidget->setDocumentMode(true);
     mainLayout->addWidget(m_tabWidget);
     
     // Connect tab signals
-    connect(m_tabWidget, &QTabWidget::currentChanged, [this](int index) {
-        if (index >= 0) {
-            m_currentWebView = qobject_cast<QWebEngineView*>(m_tabWidget->widget(index));
-            if (m_currentWebView) {
-                updateUrlBar(m_currentWebView->url());
-                updateTitle(m_currentWebView->title());
-            }
-        }
-    });
-    
-    connect(m_tabWidget, &QTabWidget::tabCloseRequested, [this](int index) {
-        if (m_tabWidget->count() > 1) {
-            m_tabWidget->removeTab(index);
-        } else {
-            QMessageBox::information(this, "Cannot Close Tab", 
-                                   "At least one tab must remain open.");
-        }
-    });
+    connect(m_tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
+    connect(m_tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::onTabCloseRequested);
 }
 
 void MainWindow::setupMenuBar()
@@ -111,29 +136,63 @@ void MainWindow::setupMenuBar()
     
     // File menu
     QMenu *fileMenu = menuBar->addMenu("&File");
-    fileMenu->addAction("&New Tab", this, [this]() {
-        QWebEngineView *webView = new QWebEngineView(this);
-        m_tabWidget->addTab(webView, "New Tab");
-        m_tabWidget->setCurrentWidget(webView);
-        m_currentWebView = webView;
-        webView->load(QUrl("https://www.kaspersky.com"));
-    }, QKeySequence::New);
+    QAction *newTabAction = fileMenu->addAction("&New Tab", this, &MainWindow::onNewTabRequested);
+    newTabAction->setShortcut(QKeySequence::AddTab);
+    
+    QAction *closeTabAction = fileMenu->addAction("&Close Tab", this, [this]() {
+        if (m_tabWidget->count() > 1) {
+            closeTab(m_tabWidget->currentIndex());
+        }
+    });
+    closeTabAction->setShortcut(QKeySequence::Close);
     
     fileMenu->addSeparator();
-    fileMenu->addAction("&Exit", this, &QWidget::close, QKeySequence::Quit);
+    
+    QAction *exitAction = fileMenu->addAction("&Exit", this, &QWidget::close);
+    exitAction->setShortcut(QKeySequence::Quit);
+    
+    // Edit menu
+    QMenu *editMenu = menuBar->addMenu("&Edit");
+    editMenu->addAction("&Find", this, [this]() {
+        if (m_currentWebView) {
+            m_currentWebView->findText("", QWebEnginePage::FindFlags());
+        }
+    }, QKeySequence::Find);
+    editMenu->addAction("&Select All", this, [this]() {
+        if (m_currentWebView) {
+            m_currentWebView->triggerPageAction(QWebEnginePage::SelectAll);
+        }
+    }, QKeySequence::SelectAll);
     
     // View menu
     QMenu *viewMenu = menuBar->addMenu("&View");
     viewMenu->addAction("&Security Status", this, &MainWindow::showSecurityStatus);
     viewMenu->addAction("&Parental Control", this, &MainWindow::showParentalControl);
     viewMenu->addAction("&Profile Manager", this, &MainWindow::showProfileManager);
+    viewMenu->addSeparator();
+    viewMenu->addAction("&Zoom In", this, [this]() {
+        if (m_currentWebView) {
+            m_currentWebView->setZoomFactor(m_currentWebView->zoomFactor() + 0.1);
+        }
+    }, QKeySequence::ZoomIn);
+    viewMenu->addAction("&Zoom Out", this, [this]() {
+        if (m_currentWebView) {
+            m_currentWebView->setZoomFactor(m_currentWebView->zoomFactor() - 0.1);
+        }
+    }, QKeySequence::ZoomOut);
+    viewMenu->addAction("&Reset Zoom", this, [this]() {
+        if (m_currentWebView) {
+            m_currentWebView->setZoomFactor(1.0);
+        }
+    });
     
     // Help menu
     QMenu *helpMenu = menuBar->addMenu("&Help");
     helpMenu->addAction("&About", this, [this]() {
         QMessageBox::about(this, "About Kaspersky Home Shield Browser",
                           "Kaspersky Home Shield Browser v1.0.0\n"
-                          "A secure browser with integrated Kaspersky protection.");
+                          "A secure browser with integrated Kaspersky protection.\n\n"
+                          "Built with Qt WebEngine for full web compatibility.");
     });
 }
 
@@ -168,6 +227,13 @@ void MainWindow::setupToolBar()
     m_addressBar = new AddressBar(this);
     m_addressBar->setPlaceholderText("Enter URL or search term...");
     toolBar->addWidget(m_addressBar);
+    
+    toolBar->addSeparator();
+    
+    // New tab button
+    m_newTabButton = new QPushButton("+", this);
+    m_newTabButton->setToolTip("New Tab");
+    toolBar->addWidget(m_newTabButton);
     
     toolBar->addSeparator();
     
@@ -218,6 +284,72 @@ void MainWindow::setupConnections()
     connect(m_securityButton, &QPushButton::clicked, this, &MainWindow::showSecurityStatus);
     connect(m_parentalControlButton, &QPushButton::clicked, this, &MainWindow::showParentalControl);
     connect(m_profileButton, &QPushButton::clicked, this, &MainWindow::showProfileManager);
+    connect(m_newTabButton, &QPushButton::clicked, this, &MainWindow::onNewTabRequested);
+}
+
+QWebEngineView* MainWindow::createNewTab(const QString &url)
+{
+    QWebEngineView *webView = new QWebEngineView(this);
+    webView->setPage(new QWebEnginePage(m_webProfile, webView));
+    
+    // Connect signals
+    connect(webView, &QWebEngineView::urlChanged, this, &MainWindow::onUrlChanged);
+    connect(webView, &QWebEngineView::titleChanged, this, &MainWindow::updateTitle);
+    connect(webView, &QWebEngineView::loadStarted, this, &MainWindow::onLoadStarted);
+    connect(webView, &QWebEngineView::loadFinished, this, &MainWindow::onLoadFinished);
+    connect(webView, &QWebEngineView::loadProgress, this, &MainWindow::onLoadProgress);
+    
+    // Connect page signals
+    QWebEnginePage *page = webView->page();
+    // Note: Download and certificate error handling will be implemented later
+    
+    // Add to tab widget
+    int index = m_tabWidget->addTab(webView, "New Tab");
+    m_tabWidget->setCurrentIndex(index);
+    m_currentWebView = webView;
+    
+    // Load URL if provided
+    if (!url.isEmpty()) {
+        webView->load(QUrl(url));
+    } else {
+        webView->load(QUrl("about:blank"));
+    }
+    
+    return webView;
+}
+
+void MainWindow::closeTab(int index)
+{
+    if (m_tabWidget->count() > 1) {
+        QWidget *widget = m_tabWidget->widget(index);
+        m_tabWidget->removeTab(index);
+        widget->deleteLater();
+        
+        // Update current web view
+        if (m_tabWidget->count() > 0) {
+            m_currentWebView = qobject_cast<QWebEngineView*>(m_tabWidget->currentWidget());
+            updateNavigationButtons();
+        }
+    } else {
+        QMessageBox::information(this, "Cannot Close Tab", 
+                               "At least one tab must remain open.");
+    }
+}
+
+void MainWindow::updateNavigationButtons()
+{
+    if (!m_currentWebView) return;
+    
+    QWebEngineHistory *history = m_currentWebView->history();
+    m_backButton->setEnabled(history->canGoBack());
+    m_forwardButton->setEnabled(history->canGoForward());
+}
+
+void MainWindow::checkUrlSecurity(const QUrl &url)
+{
+    if (m_securityManager) {
+        m_securityManager->checkUrlAsync(url.toString());
+    }
 }
 
 void MainWindow::navigateToUrl()
@@ -228,27 +360,31 @@ void MainWindow::navigateToUrl()
     if (url.isEmpty()) return;
     
     // Add protocol if missing
-    if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("file://")) {
+    if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("file://") && !url.startsWith("about:")) {
         if (url.contains(".") && !url.contains(" ")) {
             url = "https://" + url;
         } else {
-            url = "https://www.google.com/search?q=" + url;
+            url = "https://www.google.com/search?q=" + QUrl::toPercentEncoding(url);
         }
     }
     
-    m_currentWebView->load(QUrl(url));
+    QUrl qurl(url);
+    m_currentWebView->load(qurl);
+    
+    // Check URL security
+    checkUrlSecurity(qurl);
 }
 
 void MainWindow::goBack()
 {
-    if (m_currentWebView) {
+    if (m_currentWebView && m_currentWebView->history()->canGoBack()) {
         m_currentWebView->back();
     }
 }
 
 void MainWindow::goForward()
 {
-    if (m_currentWebView) {
+    if (m_currentWebView && m_currentWebView->history()->canGoForward()) {
         m_currentWebView->forward();
     }
 }
@@ -280,7 +416,11 @@ void MainWindow::updateTitle(const QString &title)
         setWindowTitle(title + " - Kaspersky Home Shield Browser");
         int currentIndex = m_tabWidget->currentIndex();
         if (currentIndex >= 0) {
-            m_tabWidget->setTabText(currentIndex, title);
+            QString shortTitle = title;
+            if (shortTitle.length() > 20) {
+                shortTitle = shortTitle.left(17) + "...";
+            }
+            m_tabWidget->setTabText(currentIndex, shortTitle);
         }
     }
 }
@@ -303,17 +443,86 @@ void MainWindow::showSecurityStatus()
 {
     QMessageBox::information(this, "Security Status", 
                            "Security features are active.\n"
-                           "Real-time protection is enabled.");
+                           "Real-time protection is enabled.\n"
+                           "KSN integration is ready.");
 }
 
 void MainWindow::showParentalControl()
 {
     QMessageBox::information(this, "Parental Control", 
-                           "Parental control settings will be available here.");
+                           "Parental control settings will be available here.\n"
+                           "Profile management is ready.");
 }
 
 void MainWindow::showProfileManager()
 {
     QMessageBox::information(this, "Profile Manager", 
-                           "Profile management will be available here.");
+                           "Profile management will be available here.\n"
+                           "User profiles are ready for configuration.");
+}
+
+void MainWindow::onTabCloseRequested(int index)
+{
+    closeTab(index);
+}
+
+void MainWindow::onCurrentTabChanged(int index)
+{
+    if (index >= 0) {
+        m_currentWebView = qobject_cast<QWebEngineView*>(m_tabWidget->widget(index));
+        if (m_currentWebView) {
+            updateUrlBar(m_currentWebView->url());
+            updateTitle(m_currentWebView->title());
+            updateNavigationButtons();
+        }
+    }
+}
+
+void MainWindow::onNewTabRequested()
+{
+    createNewTab();
+}
+
+void MainWindow::onDownloadRequested()
+{
+    // Handle download - will be implemented later
+    m_statusLabel->setText("Download requested");
+    m_statusTimer->start();
+}
+
+void MainWindow::onCertificateError()
+{
+    // Handle certificate errors - will be implemented later
+    m_statusLabel->setText("Certificate error occurred");
+    m_statusTimer->start();
+}
+
+void MainWindow::onUrlChanged(const QUrl &url)
+{
+    updateUrlBar(url);
+    checkUrlSecurity(url);
+}
+
+void MainWindow::onLoadFinished(bool success)
+{
+    m_isLoading = false;
+    updateLoadingProgress(100);
+    
+    if (success) {
+        m_statusLabel->setText("Page loaded successfully");
+    } else {
+        m_statusLabel->setText("Failed to load page");
+    }
+    m_statusTimer->start();
+}
+
+void MainWindow::onLoadStarted()
+{
+    m_isLoading = true;
+    m_statusLabel->setText("Loading...");
+}
+
+void MainWindow::onLoadProgress(int progress)
+{
+    updateLoadingProgress(progress);
 }

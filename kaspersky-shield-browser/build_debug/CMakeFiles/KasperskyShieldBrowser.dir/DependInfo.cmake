@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/workspace/kaspersky-shield-browser/build_debug/KasperskyShieldBrowser_autogen/mocs_compilation.cpp" "CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o" "gcc" "CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o.d"
   "/workspace/kaspersky-shield-browser/src/AddressBar.cpp" "CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o" "gcc" "CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o.d"
   "/workspace/kaspersky-shield-browser/src/DatabaseManager.cpp" "CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o" "gcc" "CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o.d"
   "/workspace/kaspersky-shield-browser/src/KsnClient.cpp" "CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o" "gcc" "CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o.d"

@@ -75,10 +75,24 @@ include CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/codegen:
 .PHONY : CMakeFiles/KasperskyShieldBrowser.dir/codegen
 
+CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
+CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o: KasperskyShieldBrowser_autogen/mocs_compilation.cpp
+CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o -c /workspace/kaspersky-shield-browser/build_debug/KasperskyShieldBrowser_autogen/mocs_compilation.cpp
+
+CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/kaspersky-shield-browser/build_debug/KasperskyShieldBrowser_autogen/mocs_compilation.cpp > CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.i
+
+CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/kaspersky-shield-browser/build_debug/KasperskyShieldBrowser_autogen/mocs_compilation.cpp -o CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.s
+
 CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o: /workspace/kaspersky-shield-browser/src/main.cpp
 CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o -c /workspace/kaspersky-shield-browser/src/main.cpp
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.i: cmake_force
@@ -92,7 +106,7 @@ CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.s: cmake_force
 CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o: /workspace/kaspersky-shield-browser/src/MainWindow.cpp
 CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o -c /workspace/kaspersky-shield-browser/src/MainWindow.cpp
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.i: cmake_force
@@ -106,7 +120,7 @@ CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.s: cmake_force
 CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o: /workspace/kaspersky-shield-browser/src/SecurityManager.cpp
 CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o -c /workspace/kaspersky-shield-browser/src/SecurityManager.cpp
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.i: cmake_force
@@ -120,7 +134,7 @@ CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.s: cmake_force
 CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.o: /workspace/kaspersky-shield-browser/src/ParentalControlManager.cpp
 CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.o -c /workspace/kaspersky-shield-browser/src/ParentalControlManager.cpp
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.i: cmake_force
@@ -134,7 +148,7 @@ CMakeFiles/KasperskyShieldBrowser.dir/src/ParentalControlManager.cpp.s: cmake_fo
 CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o: /workspace/kaspersky-shield-browser/src/DatabaseManager.cpp
 CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o -c /workspace/kaspersky-shield-browser/src/DatabaseManager.cpp
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.i: cmake_force
@@ -148,7 +162,7 @@ CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.s: cmake_force
 CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o: /workspace/kaspersky-shield-browser/src/KsnClient.cpp
 CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.o -c /workspace/kaspersky-shield-browser/src/KsnClient.cpp
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.i: cmake_force
@@ -162,7 +176,7 @@ CMakeFiles/KasperskyShieldBrowser.dir/src/KsnClient.cpp.s: cmake_force
 CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o: /workspace/kaspersky-shield-browser/src/AddressBar.cpp
 CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o -c /workspace/kaspersky-shield-browser/src/AddressBar.cpp
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.i: cmake_force
@@ -176,7 +190,7 @@ CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.s: cmake_force
 CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/flags.make
 CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.o: /workspace/kaspersky-shield-browser/src/ProfileManager.cpp
 CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.o: CMakeFiles/KasperskyShieldBrowser.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.o -MF CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.o.d -o CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.o -c /workspace/kaspersky-shield-browser/src/ProfileManager.cpp
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.i: cmake_force
@@ -189,6 +203,7 @@ CMakeFiles/KasperskyShieldBrowser.dir/src/ProfileManager.cpp.s: cmake_force
 
 # Object files for target KasperskyShieldBrowser
 KasperskyShieldBrowser_OBJECTS = \
+"CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o" \
 "CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o" \
 "CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o" \
 "CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o" \
@@ -201,6 +216,7 @@ KasperskyShieldBrowser_OBJECTS = \
 # External object files for target KasperskyShieldBrowser
 KasperskyShieldBrowser_EXTERNAL_OBJECTS =
 
+KasperskyShieldBrowser: CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o
 KasperskyShieldBrowser: CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o
 KasperskyShieldBrowser: CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o
 KasperskyShieldBrowser: CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o
@@ -233,7 +249,7 @@ KasperskyShieldBrowser: /usr/lib/x86_64-linux-gnu/libQt6Qml.so.6.8.3
 KasperskyShieldBrowser: /usr/lib/x86_64-linux-gnu/libQt6Network.so.6.8.3
 KasperskyShieldBrowser: /usr/lib/x86_64-linux-gnu/libQt6Core.so.6.8.3
 KasperskyShieldBrowser: CMakeFiles/KasperskyShieldBrowser.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable KasperskyShieldBrowser"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/kaspersky-shield-browser/build_debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable KasperskyShieldBrowser"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/KasperskyShieldBrowser.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

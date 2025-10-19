@@ -68,16 +68,6 @@ CMAKE_BINARY_DIR = /workspace/kaspersky-shield-browser/build_debug
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-.PHONY : test/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "No interactive CMake dialog available..."
@@ -188,56 +178,54 @@ KasperskyShieldBrowser/fast:
 .PHONY : KasperskyShieldBrowser/fast
 
 #=============================================================================
-# Target rules for targets named test_security_manager
+# Target rules for targets named KasperskyShieldBrowser_autogen_timestamp_deps
 
 # Build rule for target.
-test_security_manager: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_security_manager
-.PHONY : test_security_manager
+KasperskyShieldBrowser_autogen_timestamp_deps: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 KasperskyShieldBrowser_autogen_timestamp_deps
+.PHONY : KasperskyShieldBrowser_autogen_timestamp_deps
 
 # fast build rule for target.
-test_security_manager/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_security_manager.dir/build.make tests/CMakeFiles/test_security_manager.dir/build
-.PHONY : test_security_manager/fast
+KasperskyShieldBrowser_autogen_timestamp_deps/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KasperskyShieldBrowser_autogen_timestamp_deps.dir/build.make CMakeFiles/KasperskyShieldBrowser_autogen_timestamp_deps.dir/build
+.PHONY : KasperskyShieldBrowser_autogen_timestamp_deps/fast
 
 #=============================================================================
-# Target rules for targets named test_parental_control
+# Target rules for targets named KasperskyShieldBrowser_autogen
 
 # Build rule for target.
-test_parental_control: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_parental_control
-.PHONY : test_parental_control
+KasperskyShieldBrowser_autogen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 KasperskyShieldBrowser_autogen
+.PHONY : KasperskyShieldBrowser_autogen
 
 # fast build rule for target.
-test_parental_control/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_parental_control.dir/build.make tests/CMakeFiles/test_parental_control.dir/build
-.PHONY : test_parental_control/fast
+KasperskyShieldBrowser_autogen/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KasperskyShieldBrowser_autogen.dir/build.make CMakeFiles/KasperskyShieldBrowser_autogen.dir/build
+.PHONY : KasperskyShieldBrowser_autogen/fast
 
-#=============================================================================
-# Target rules for targets named test_database_manager
+KasperskyShieldBrowser_autogen/mocs_compilation.o: KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o
+.PHONY : KasperskyShieldBrowser_autogen/mocs_compilation.o
 
-# Build rule for target.
-test_database_manager: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_database_manager
-.PHONY : test_database_manager
+# target to build an object file
+KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KasperskyShieldBrowser.dir/build.make CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o
+.PHONY : KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o
 
-# fast build rule for target.
-test_database_manager/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_database_manager.dir/build.make tests/CMakeFiles/test_database_manager.dir/build
-.PHONY : test_database_manager/fast
+KasperskyShieldBrowser_autogen/mocs_compilation.i: KasperskyShieldBrowser_autogen/mocs_compilation.cpp.i
+.PHONY : KasperskyShieldBrowser_autogen/mocs_compilation.i
 
-#=============================================================================
-# Target rules for targets named test_profile_manager
+# target to preprocess a source file
+KasperskyShieldBrowser_autogen/mocs_compilation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KasperskyShieldBrowser.dir/build.make CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.i
+.PHONY : KasperskyShieldBrowser_autogen/mocs_compilation.cpp.i
 
-# Build rule for target.
-test_profile_manager: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_profile_manager
-.PHONY : test_profile_manager
+KasperskyShieldBrowser_autogen/mocs_compilation.s: KasperskyShieldBrowser_autogen/mocs_compilation.cpp.s
+.PHONY : KasperskyShieldBrowser_autogen/mocs_compilation.s
 
-# fast build rule for target.
-test_profile_manager/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_profile_manager.dir/build.make tests/CMakeFiles/test_profile_manager.dir/build
-.PHONY : test_profile_manager/fast
+# target to generate assembly for a file
+KasperskyShieldBrowser_autogen/mocs_compilation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KasperskyShieldBrowser.dir/build.make CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.s
+.PHONY : KasperskyShieldBrowser_autogen/mocs_compilation.cpp.s
 
 src/AddressBar.o: src/AddressBar.cpp.o
 .PHONY : src/AddressBar.o
@@ -443,12 +431,12 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... test"
+	@echo "... KasperskyShieldBrowser_autogen"
+	@echo "... KasperskyShieldBrowser_autogen_timestamp_deps"
 	@echo "... KasperskyShieldBrowser"
-	@echo "... test_database_manager"
-	@echo "... test_parental_control"
-	@echo "... test_profile_manager"
-	@echo "... test_security_manager"
+	@echo "... KasperskyShieldBrowser_autogen/mocs_compilation.o"
+	@echo "... KasperskyShieldBrowser_autogen/mocs_compilation.i"
+	@echo "... KasperskyShieldBrowser_autogen/mocs_compilation.s"
 	@echo "... src/AddressBar.o"
 	@echo "... src/AddressBar.i"
 	@echo "... src/AddressBar.s"

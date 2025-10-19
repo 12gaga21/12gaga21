@@ -1,5 +1,10 @@
 file(REMOVE_RECURSE
   "CMakeFiles/KasperskyShieldBrowser.dir/link.d"
+  "CMakeFiles/KasperskyShieldBrowser_autogen.dir/AutogenUsed.txt"
+  "CMakeFiles/KasperskyShieldBrowser_autogen.dir/ParseCache.txt"
+  "KasperskyShieldBrowser_autogen"
+  "CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o"
+  "CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o.d"
   "CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o"
   "CMakeFiles/KasperskyShieldBrowser.dir/src/AddressBar.cpp.o.d"
   "CMakeFiles/KasperskyShieldBrowser.dir/src/DatabaseManager.cpp.o"

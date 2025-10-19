@@ -2,6 +2,7 @@ KasperskyShieldBrowser: \
   /lib/x86_64-linux-gnu/Scrt1.o \
   /lib/x86_64-linux-gnu/crti.o \
   /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o \
+  CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o \
   CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o \
   CMakeFiles/KasperskyShieldBrowser.dir/src/MainWindow.cpp.o \
   CMakeFiles/KasperskyShieldBrowser.dir/src/SecurityManager.cpp.o \
@@ -169,6 +170,8 @@ KasperskyShieldBrowser: \
 /lib/x86_64-linux-gnu/crti.o:
 
 /usr/lib/gcc/x86_64-linux-gnu/14/crtbeginS.o:
+
+CMakeFiles/KasperskyShieldBrowser.dir/KasperskyShieldBrowser_autogen/mocs_compilation.cpp.o:
 
 CMakeFiles/KasperskyShieldBrowser.dir/src/main.cpp.o:
 
