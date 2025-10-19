@@ -1,0 +1,676 @@
+Техническая документация: Kaspersky Home Shield Browser
+
+Содержание
+
+1. Обзор проекта
+2. Технические спецификации
+3. Архитектура системы
+4. Детальный план разработки
+5. API и интеграции
+6. База данных
+7. Безопасность
+8. Тестирование
+9. Развертывание
+
+---
+
+Обзор проекта
+
+Цель проекта
+
+Разработка кроссплатформенного безопасного браузера для домашнего использования с глубокой интеграцией в экосистему продуктов "Лаборатории Касперского".
+
+Ключевые возможности
+
+· Проактивная защита через интеграцию с Kaspersky Security Network
+· Расширенный родительский контроль с гибкими настройками
+· Приватность и конфиденциальность с улучшенными режимами просмотра
+· Производительность на базе Chromium с минимальными накладками
+
+Целевая аудитория
+
+· Семьи с детьми различного возраста
+· Пользователи, ценящие конфиденциальность
+· Пользователи продуктов Касперского, желающие расширенной защиты
+
+Технические спецификации
+
+Технологический стек
+
+Основные технологии
+
+```cpp
+// Ядро и производительность
+- Chromium Embedded Framework (CEF) 118+
+- C++17/20 как основной язык
+- Qt 6.5+ для кроссплатформенного GUI
+- CMake 3.20+ для сборки
+
+// Базы данных и хранение
+- SQLite 3.35+ для локального хранения
+- JSON для конфигурационных файлов
+- Protobuf для межпроцессного взаимодействия
+
+// Безопасность
+- OpenSSL 3.0+ для шифрования
+- Libsodium для криптографических операций
+- Custom Security Sandbox на базе CEF
+```
+
+Интеграции и API
+
+```cpp
+// Внешние сервисы Касперского
+- Kaspersky Security Network (KSN) REST API
+- Kaspersky Safe Kids API (родительский контроль)
+- Kaspersky Secure Connection API (VPN)
+- Локальное API антивирусного ядра
+
+// Системные интеграции
+- Windows: Named Pipes, WMI, Registry
+- macOS: UNIX Sockets, LaunchDaemons, Keychain
+```
+
+Системные требования
+
+Минимальные требования
+
+Windows:
+
+· Windows 10/11 (64-bit)
+· 4 ГБ RAM
+· 2 ГБ свободного места
+· Kaspersky Internet Security 2021+
+
+macOS:
+
+· macOS 12.0+
+· 4 ГБ RAM
+· 2 ГБ свободного места
+· Kaspersky Internet Security для Mac
+
+Рекомендуемые требования
+
+· 8 ГБ RAM
+· SSD накопитель
+· Процессор с поддержкой AES-NI
+· Kaspersky Total Security
+
+Архитектура системы
+
+Общая архитектура
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Kaspersky Home Shield Browser            │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   UI Layer  │  │  Security   │  │  Parental Control   │  │
+│  │   (Qt 6)    │  │   Module    │  │      Module         │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │  Browser    │  │   Privacy   │  │   Settings &        │  │
+│  │  Engine     │  │   Module    │  │   Database          │  │
+│  │  (CEF)      │  │             │  │   (SQLite)          │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+├─────────────────────────────────────────────────────────────┤
+│                Kaspersky Integration Layer                  │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   KSN API   │  │ Local AV    │  │   VPN Client        │  │
+│  │  Client     │  │ Integration │  │                     │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Детали компонентов
+
+1. UI Layer (Qt 6)
+
+```cpp
+class MainWindow : public QMainWindow {
+    // Основные компоненты UI
+    QCefWidget* browser_view;
+    SecurityStatusBar* security_bar;
+    ProfileManagerWidget* profile_switcher;
+    ParentalControlPanel* parental_panel;
+    
+    // Сигналы безопасности
+    signals:
+        void urlSafetyChanged(UrlSafety status);
+        void downloadScanned(ScanResult result);
+        void vpnStatusChanged(VpnState state);
+};
+```
+
+2. Security Module
+
+```cpp
+class SecurityManager {
+private:
+    KsnClient* ksn_client;
+    LocalScanner* local_scanner;
+    ThreatDatabase* threat_db;
+    
+public:
+    UrlSafety checkUrl(const QUrl& url);
+    ScanResult scanFile(const QString& file_path);
+    void blockRequest(const QString& reason);
+};
+```
+
+3. Parental Control Module
+
+```cpp
+class ParentalControlManager {
+private:
+    QMap<QString, UserProfile> profiles;
+    TimeScheduler* scheduler;
+    ContentFilter* content_filter;
+    
+public:
+    bool isUrlAllowed(const QUrl& url, const QString& profile);
+    bool isTimeAllowed(const QString& profile);
+    void logActivity(const ActivityRecord& record);
+};
+```
+
+Детальный план разработки
+
+Фаза 1: Подготовка (Недели 1-2)
+
+Задача 1.1: Настройка среды разработки
+
+```bash
+# Установка зависимостей Windows
+choco install visualstudio2022community cmake git python3
+choco install qtcreator --version=6.5.0
+
+# Установка зависимостей macOS
+brew install cmake git python3
+brew install qt@6
+
+# Получение CEF
+git clone https://github.com/chromiumembedded/cef.git
+cd cef && cmake -B build && cmake --build build
+```
+
+Задача 1.2: Изучение API Касперского
+
+· Получить доступ к KSN API документации
+· Изучить Kaspersky Open API спецификации
+· Создать тестовое приложение для проверки интеграции
+· Настроить аутентификацию и авторизацию
+
+Задача 1.3: Проектирование архитектуры
+
+· Создать UML диаграммы компонентов
+· Проектирование схемы базы данных
+· Определение интерфейсов между модулями
+· Планирование системы сообщений
+
+Фаза 2: Базовый браузер (Недели 3-6)
+
+Задача 2.1: Минимальный работающий браузер
+
+```cpp
+// main.cpp - точка входа
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    
+    // Инициализация CEF
+    CefInitialize();
+    
+    // Создание главного окна
+    MainWindow window;
+    window.show();
+    
+    return app.exec();
+}
+```
+
+Конкретные подзадачи:
+
+· Создать базовое окно приложения (QMainWindow)
+· Интегрировать CEF виджет для отображения веб-контента
+· Реализовать навигацию (назад/вперед/обновить)
+· Создать систему вкладок (QTabWidget)
+· Реализовать адресную строку с автодополнением
+
+Задача 2.2: Базовый UI
+
+```cpp
+class AddressBar : public QLineEdit {
+    void updateSecurityIcon(UrlSafety safety) {
+        switch(safety) {
+            case UrlSafety::Safe: setStyleSheet("green"); break;
+            case UrlSafety::Suspicious: setStyleSheet("yellow"); break;
+            case UrlSafety::Dangerous: setStyleSheet("red"); break;
+        }
+    }
+};
+```
+
+Фаза 3: Интеграция безопасности (Недели 7-10)
+
+Задача 3.1: Модуль проверки URL
+
+```cpp
+class KsnClient : public QObject {
+    Q_OBJECT
+    
+public slots:
+    void checkUrlAsync(const QUrl& url) {
+        // Асинхронная проверка через KSN API
+        auto future = QtConcurrent::run([url]() {
+            return ksnApi.checkUrl(url.toString());
+        });
+        
+        connect(future, &QFutureWatcher<UrlCheckResult>::finished, 
+                this, &KsnClient::onUrlCheckCompleted);
+    }
+};
+```
+
+Подзадачи:
+
+· Реализовать клиент KSN API
+· Создать систему кэширования результатов
+· Интегрировать проверку перед загрузкой страниц
+· Реализовать блокировку с пользовательским интерфейсом
+
+Задача 3.2: Проверка файлов
+
+```cpp
+class DownloadManager : public QObject {
+    void onDownloadStarted(const QString& url, const QString& path) {
+        // Перехват загрузки и отправка на проверку
+        FileScanner::instance()->scanFileAsync(path)
+            .then([this](ScanResult result) {
+                if (result.isSafe()) {
+                    completeDownload();
+                } else {
+                    quarantineFile(result.threatName());
+                }
+            });
+    }
+};
+```
+
+Фаза 4: Родительский контроль (Недели 11-14)
+
+Задача 4.1: Система профилей
+
+```sql
+-- profiles.sql
+CREATE TABLE profiles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    profile_type TEXT CHECK(profile_type IN ('parent', 'child', 'teen')),
+    avatar BLOB,
+    time_limit_minutes INTEGER DEFAULT 120,
+    bed_time_start TIME,
+    bed_time_end TIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE profile_restrictions (
+    profile_id INTEGER,
+    category_id INTEGER,
+    is_blocked BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY(profile_id) REFERENCES profiles(id)
+);
+```
+
+Задача 4.2: Фильтрация контента
+
+```cpp
+class ContentFilter {
+    bool isAllowed(const QUrl& url, const QString& profile_id) {
+        auto categories = categorizeUrl(url);
+        for (auto category : categories) {
+            if (isCategoryBlocked(profile_id, category)) {
+                logBlockedAccess(profile_id, url, category);
+                return false;
+            }
+        }
+        return true;
+    }
+};
+```
+
+Фаза 5: Конфиденциальность (Недели 15-16)
+
+Задача 5.1: Режим Инкогнито+
+
+```cpp
+class EnhancedIncognitoMode {
+    void activate() {
+        // Автоматическое включение VPN
+        vpnClient->connect();
+        
+        // Максимальная защита от трекеров
+        trackerBlocker->setMaximumProtection();
+        
+        // Отключение сохранения данных
+        browserSettings->setPersistSession(false);
+        browserSettings->setPersistCache(false);
+    }
+};
+```
+
+Фаза 6: Тестирование (Недели 17-18)
+
+Задача 6.1: Модульное тестирование
+
+```cpp
+// tests/test_security_manager.cpp
+TEST(SecurityManagerTest, UrlSafetyClassification) {
+    SecurityManager manager;
+    
+    EXPECT_EQ(manager.checkUrl("https://google.com"), UrlSafety::Safe);
+    EXPECT_EQ(manager.checkUrl("http://phishing-site.com"), UrlSafety::Dangerous);
+    EXPECT_EQ(manager.checkUrl("http://suspicious-domain.net"), UrlSafety::Suspicious);
+}
+```
+
+Фаза 7: Финальная полировка (Недели 19-20)
+
+Задача 7.1: Создание установщика
+
+```bash
+# Windows (MSI)
+cpack -G WIX -C Release
+
+# macOS (DMG)
+hdiutil create -volname "Kaspersky Home Shield" -srcfolder ./app -ov kaspersky-shield.dmg
+```
+
+API и интеграции
+
+Kaspersky Security Network API
+
+Проверка URL
+
+```cpp
+class KsnApiClient {
+public:
+    struct UrlCheckResult {
+        bool isSafe;
+        std::string threatType;
+        std::string category;
+        int reputationScore;
+    };
+    
+    UrlCheckResult checkUrl(const std::string& url) {
+        // Реализация вызова KSN API
+        auto response = httpClient.post("https://ksn.kaspersky.com/api/urlcheck", {
+            {"url", url},
+            {"version", "1.0"}
+        });
+        
+        return parseResponse(response);
+    }
+};
+```
+
+Локальная интеграция с антивирусом
+
+Windows (через Named Pipes)
+
+```cpp
+class WindowsAvIntegration {
+    bool scanFile(const std::wstring& filePath) {
+        HANDLE pipe = CreateFile(L"\\\\.\\pipe\\KasperskyAntivirus",
+                                GENERIC_READ | GENERIC_WRITE,
+                                0, NULL, OPEN_EXISTING, 0, NULL);
+        
+        // Отправка команды сканирования
+        ScanCommand cmd = {SCAN_FILE, filePath};
+        DWORD written;
+        WriteFile(pipe, &cmd, sizeof(cmd), &written, NULL);
+        
+        // Получение результата
+        ScanResult result;
+        DWORD read;
+        ReadFile(pipe, &result, sizeof(result), &read, NULL);
+        
+        return result.isClean;
+    }
+};
+```
+
+База данных
+
+Схема базы данных
+
+```sql
+-- main_schema.sql
+CREATE TABLE settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE browsing_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    profile_id INTEGER,
+    url TEXT NOT NULL,
+    title TEXT,
+    visit_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    safety_status TEXT,
+    FOREIGN KEY(profile_id) REFERENCES profiles(id)
+);
+
+CREATE TABLE blocked_attempts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    profile_id INTEGER,
+    url TEXT NOT NULL,
+    reason TEXT,
+    block_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    category TEXT,
+    FOREIGN KEY(profile_id) REFERENCES profiles(id)
+);
+
+CREATE TABLE time_limits (
+    profile_id INTEGER PRIMARY KEY,
+    daily_limit_minutes INTEGER,
+    current_usage_minutes INTEGER DEFAULT 0,
+    last_reset_date DATE,
+    FOREIGN KEY(profile_id) REFERENCES profiles(id)
+);
+
+CREATE INDEX idx_history_profile_time ON browsing_history(profile_id, visit_time);
+CREATE INDEX idx_blocked_profile_time ON blocked_attempts(profile_id, block_time);
+```
+
+Менеджер базы данных
+
+```cpp
+class DatabaseManager {
+private:
+    QSqlDatabase db;
+    
+public:
+    bool initialize() {
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName("kaspersky_shield.db");
+        
+        if (!db.open()) {
+            qCritical() << "Cannot open database:" << db.lastError();
+            return false;
+        }
+        
+        return runMigrations();
+    }
+    
+    void logSecurityEvent(const SecurityEvent& event) {
+        QSqlQuery query;
+        query.prepare("INSERT INTO security_events (type, severity, details) VALUES (?, ?, ?)");
+        query.addBindValue(event.type);
+        query.addBindValue(event.severity);
+        query.addBindValue(event.details);
+        query.exec();
+    }
+};
+```
+
+Безопасность
+
+Защита данных
+
+Шифрование чувствительной информации
+
+```cpp
+class DataEncryption {
+private:
+    QByteArray encryptionKey;
+    
+public:
+    QByteArray encrypt(const QByteArray& data) {
+        QByteArray iv(16, 0); // initialization vector
+        return QAESEncryption::Crypt(QAESEncryption::AES_256, 
+                                   QAESEncryption::CBC,
+                                   data, encryptionKey, iv);
+    }
+    
+    QByteArray decrypt(const QByteArray& encrypted) {
+        QByteArray iv(16, 0);
+        return QAESEncryption::Decrypt(QAESEncryption::AES_256,
+                                     QAESEncryption::CBC,
+                                     encrypted, encryptionKey, iv);
+    }
+};
+```
+
+Защита от вмешательства
+
+```cpp
+class IntegrityChecker {
+public:
+    bool verifyProcessIntegrity() {
+        // Проверка, что браузер не модифицирован
+        return calculateProcessHash() == getStoredHash();
+    }
+    
+    bool isDebuggerPresent() {
+        // Анти-отладочные техники
+        return IsDebuggerPresent(); // Windows API
+    }
+};
+```
+
+Тестирование
+
+План тестирования
+
+Модульные тесты
+
+```cpp
+TEST_F(ParentalControlTest, TimeLimitEnforcement) {
+    auto profile = createChildProfile();
+    profile.setTimeLimit(60); // 60 минут
+    
+    // Симуляция использования
+    simulateBrowsing(profile, 70); // 70 минут использования
+    
+    EXPECT_TRUE(profile.isTimeLimitExceeded());
+    EXPECT_FALSE(profile.canBrowse());
+}
+```
+
+Интеграционные тесты
+
+```cpp
+TEST_F(SecurityIntegrationTest, MaliciousUrlBlocking) {
+    SecurityManager security;
+    auto result = security.checkUrl("http://known-malicious-site.com");
+    
+    EXPECT_EQ(result.safety, UrlSafety::Dangerous);
+    EXPECT_TRUE(result.shouldBlock);
+}
+```
+
+Производительность
+
+```cpp
+BENCHMARK(SecurityManagerBenchmark, UrlCheckPerformance) {
+    SecurityManager manager;
+    
+    for (int i = 0; i < 1000; ++i) {
+        manager.checkUrl(generateTestUrl(i));
+    }
+}
+```
+
+Развертывание
+
+Процесс сборки
+
+Windows build script
+
+```batch
+@echo off
+:: build_windows.bat
+set BUILD_TYPE=Release
+mkdir build
+cd build
+cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ..
+cmake --build . --config %BUILD_TYPE% --target package
+```
+
+macOS build script
+
+```bash
+#!/bin/bash
+# build_macos.sh
+BUILD_TYPE="Release"
+mkdir build && cd build
+cmake -G "Xcode" -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+xcodebuild -configuration $BUILD_TYPE -target package
+```
+
+Установка и обновление
+
+Автоматическое обновление
+
+```cpp
+class UpdateManager {
+public:
+    void checkForUpdates() {
+        auto updateInfo = updateServer.getLatestVersion();
+        if (updateInfo.version > currentVersion()) {
+            showUpdateDialog(updateInfo);
+        }
+    }
+    
+    void performUpdate() {
+        downloadUpdatePackage();
+        verifyPackageSignature();
+        installUpdate();
+        restartApplication();
+    }
+};
+```
+
+---
+
+Заключение
+
+Этот документ представляет собой полную техническую документацию для разработки Kaspersky Home Shield Browser. Документ охватывает все аспекты от архитектуры и технологического стека до детального плана разработки и развертывания.
+
+Статус проекта
+
+· Текущая фаза: Фаза 1 - Подготовка
+· Общий прогресс: 0%
+· Следующая задача: 1.1 - Настройка среды разработки
+
+Контакты и поддержка
+
+Для вопросов и обновлений документации обращаться к техническому руководителю проекта.
+
+---
+
+Документ создан: $(date)
+Версия: 1.0
+Статус: Черновик
