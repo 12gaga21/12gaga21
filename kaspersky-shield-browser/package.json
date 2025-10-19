@@ -1,6 +1,6 @@
 {
   "name": "kaspersky-shield-browser",
-  "version": "2.5.0",
+  "version": "1.0.0",
   "description": "Professional secure browser for families with Kaspersky protection",
   "main": "dist/main.js",
   "author": "Kaspersky Lab",
