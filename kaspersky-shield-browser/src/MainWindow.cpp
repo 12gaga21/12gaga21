@@ -3,6 +3,9 @@
 #include "SecurityManager.h"
 #include "ParentalControlManager.h"
 #include "ProfileManager.h"
+#include "KsnClient.h"
+#include "DatabaseManager.h"
+#include "SecuritySettingsDialog.h"
 #include <QApplication>
 #include <QWebEngineView>
 #include <QWebEnginePage>
@@ -22,6 +25,7 @@
 #include <QDebug>
 #include <QNetworkReply>
 #include <QUrl>
+#include <QStandardPaths>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -38,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent)
     , m_newTabButton(nullptr)
     , m_progressBar(nullptr)
     , m_statusLabel(nullptr)
+    , m_ksnClient(nullptr)
+    , m_databaseManager(nullptr)
     , m_securityManager(nullptr)
     , m_parentalControlManager(nullptr)
     , m_profileManager(nullptr)
@@ -45,6 +51,10 @@ MainWindow::MainWindow(QWidget *parent)
     , m_webProfile(nullptr)
     , m_isLoading(false)
 {
+    // Initialize all components first
+    initializeComponents();
+    
+    // Setup UI
     setupWebEngine();
     setupUI();
     setupMenuBar();
@@ -52,18 +62,18 @@ MainWindow::MainWindow(QWidget *parent)
     setupStatusBar();
     setupConnections();
     
-    // Initialize managers
-    m_securityManager = new SecurityManager(this);
-    m_parentalControlManager = new ParentalControlManager(this);
-    m_profileManager = new ProfileManager(this);
+    // Connect components
+    connectComponents();
     
     // Set window properties
-    setWindowTitle("Kaspersky Home Shield Browser");
+    setWindowTitle("Kaspersky Home Shield Browser - Защищенный браузер");
     setMinimumSize(1024, 768);
     resize(1200, 800);
     
-    // Create initial tab
+    // Load initial page
     createNewTab("https://www.kaspersky.com");
+    
+    qDebug() << "MainWindow initialized successfully";
 }
 
 MainWindow::~MainWindow()
@@ -347,8 +357,24 @@ void MainWindow::updateNavigationButtons()
 
 void MainWindow::checkUrlSecurity(const QUrl &url)
 {
-    if (m_securityManager) {
-        m_securityManager->checkUrlAsync(url.toString());
+    if (!m_securityManager || !m_parentalControlManager || !m_profileManager) {
+        return;
+    }
+    
+    // Get current profile
+    QString currentProfileId = m_profileManager->getCurrentProfileId();
+    
+    // Check URL security asynchronously
+    m_securityManager->checkUrlAsync(url);
+    
+    // Check parental control
+    if (!m_parentalControlManager->isUrlAllowed(url, currentProfileId)) {
+        qDebug() << "URL blocked by parental control:" << url.toString();
+        
+        // Stop loading if currently loading
+        if (m_currentWebView && m_isLoading) {
+            m_currentWebView->stop();
+        }
     }
 }
 
@@ -441,10 +467,13 @@ void MainWindow::updateLoadingProgress(int progress)
 
 void MainWindow::showSecurityStatus()
 {
-    QMessageBox::information(this, "Security Status", 
-                           "Security features are active.\n"
-                           "Real-time protection is enabled.\n"
-                           "KSN integration is ready.");
+    if (!m_securityManager) {
+        QMessageBox::warning(this, "Ошибка", "SecurityManager не инициализирован");
+        return;
+    }
+    
+    SecuritySettingsDialog dialog(m_securityManager, this);
+    dialog.exec();
 }
 
 void MainWindow::showParentalControl()
@@ -525,4 +554,144 @@ void MainWindow::onLoadStarted()
 void MainWindow::onLoadProgress(int progress)
 {
     updateLoadingProgress(progress);
+}
+
+void MainWindow::initializeComponents()
+{
+    qDebug() << "Initializing browser components...";
+    
+    // 1. Create KSN Client
+    m_ksnClient = new KsnClient(this);
+    KsnClient::Config ksnConfig;
+    ksnConfig.apiKey = "demo_key"; // TODO: Get real API key
+    ksnConfig.apiUrl = "https://api.kaspersky.com/ksn"; // Demo URL
+    ksnConfig.timeoutMs = 5000;
+    ksnConfig.maxRetries = 3;
+    ksnConfig.cacheSize = 10000;
+    ksnConfig.cacheExpiryHours = 24;
+    ksnConfig.enableParentalControl = true;
+    ksnConfig.enableRealTimeCheck = true;
+    ksnConfig.enableCaching = true;
+    ksnConfig.enableLogging = true;
+    
+    if (!m_ksnClient->initialize(ksnConfig)) {
+        qWarning() << "Failed to initialize KSN Client - running in demo mode";
+    } else {
+        qDebug() << "KSN Client initialized successfully";
+    }
+    
+    // 2. Create Database Manager
+    m_databaseManager = new DatabaseManager(this);
+    QString dbPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) 
+                    + "/kaspersky_shield.db";
+    
+    if (!m_databaseManager->initialize(dbPath)) {
+        qWarning() << "Failed to initialize Database Manager";
+    } else {
+        qDebug() << "Database Manager initialized successfully";
+    }
+    
+    // 3. Create and initialize Security Manager
+    m_securityManager = new SecurityManager(this);
+    if (!m_securityManager->initialize(m_ksnClient)) {
+        qWarning() << "Failed to initialize Security Manager";
+    } else {
+        qDebug() << "Security Manager initialized successfully";
+    }
+    
+    // 4. Create and initialize Parental Control Manager
+    m_parentalControlManager = new ParentalControlManager(this);
+    if (!m_parentalControlManager->initialize(m_ksnClient)) {
+        qWarning() << "Failed to initialize Parental Control Manager";
+    } else {
+        qDebug() << "Parental Control Manager initialized successfully";
+    }
+    
+    // 5. Create and initialize Profile Manager
+    m_profileManager = new ProfileManager(this);
+    if (!m_profileManager->initialize(m_databaseManager)) {
+        qWarning() << "Failed to initialize Profile Manager";
+    } else {
+        qDebug() << "Profile Manager initialized successfully";
+    }
+    
+    qDebug() << "All components initialized";
+}
+
+void MainWindow::connectComponents()
+{
+    qDebug() << "Connecting component signals...";
+    
+    // Security Manager signals
+    connect(m_securityManager, &SecurityManager::urlBlocked,
+            this, [this](const QUrl &url, const QString &reason) {
+        QMessageBox::warning(this, "URL Заблокирован",
+                           QString("URL заблокирован по причине безопасности:\n\n%1\n\nПричина: %2")
+                           .arg(url.toString()).arg(reason));
+        m_statusLabel->setText(QString("Заблокирован: %1").arg(url.host()));
+        m_statusTimer->start();
+    });
+    
+    connect(m_securityManager, &SecurityManager::threatDetected,
+            this, [this](const QUrl &url, const QString &threatType) {
+        m_statusLabel->setText(QString("Угроза обнаружена: %1 - %2")
+                              .arg(threatType).arg(url.host()));
+        m_statusTimer->start();
+    });
+    
+    // Parental Control signals
+    connect(m_parentalControlManager, &ParentalControlManager::urlBlocked,
+            this, [this](const QString &profileId, const QUrl &url, const QString &reason) {
+        QMessageBox::information(this, "Родительский контроль",
+                               QString("Доступ запрещен для профиля '%1':\n\n%2\n\nПричина: %3")
+                               .arg(profileId).arg(url.toString()).arg(reason));
+        m_statusLabel->setText(QString("Доступ запрещен: %1").arg(url.host()));
+        m_statusTimer->start();
+    });
+    
+    connect(m_parentalControlManager, &ParentalControlManager::timeLimitReached,
+            this, [this](const QString &profileId) {
+        QMessageBox::warning(this, "Лимит времени",
+                           QString("Дневной лимит времени исчерпан для профиля '%1'")
+                           .arg(profileId));
+    });
+    
+    // Profile Manager signals
+    connect(m_profileManager, &ProfileManager::currentProfileChanged,
+            this, [this](const QString &profileId) {
+        auto profile = m_profileManager->getProfile(profileId);
+        setWindowTitle(QString("Kaspersky Home Shield Browser - Профиль: %1")
+                      .arg(profile.name));
+        m_statusLabel->setText(QString("Переключено на профиль: %1").arg(profile.name));
+        m_statusTimer->start();
+    });
+    
+    connect(m_profileManager, &ProfileManager::profileCreated,
+            this, [this](const QString &profileId) {
+        m_statusLabel->setText(QString("Профиль создан: %1").arg(profileId));
+        m_statusTimer->start();
+    });
+    
+    // KSN Client signals
+    connect(m_ksnClient, &KsnClient::urlCheckCompleted,
+            this, [this](const QUrl &url, const KsnClient::UrlCheckResponse &response) {
+        QString statusText;
+        switch (response.result) {
+            case KsnClient::UrlCheckResult::Safe:
+                statusText = QString("✅ Безопасно: %1").arg(url.host());
+                break;
+            case KsnClient::UrlCheckResult::Suspicious:
+                statusText = QString("⚠️ Подозрительно: %1").arg(url.host());
+                break;
+            case KsnClient::UrlCheckResult::Malicious:
+            case KsnClient::UrlCheckResult::Phishing:
+                statusText = QString("🛑 Опасно: %1 - %2").arg(url.host()).arg(response.reason);
+                break;
+            default:
+                statusText = QString("❓ Неизвестно: %1").arg(url.host());
+        }
+        m_statusLabel->setText(statusText);
+    });
+    
+    qDebug() << "All component signals connected";
 }

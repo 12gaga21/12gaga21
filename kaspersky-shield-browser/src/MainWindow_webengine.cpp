@@ -371,8 +371,24 @@ void MainWindow::updateNavigationButtons()
 
 void MainWindow::checkUrlSecurity(const QUrl &url)
 {
-    if (m_securityManager) {
-        m_securityManager->checkUrlAsync(url.toString());
+    if (!m_securityManager || !m_parentalControlManager || !m_profileManager) {
+        return;
+    }
+    
+    // Get current profile
+    QString currentProfileId = m_profileManager->getCurrentProfileId();
+    
+    // Check URL security asynchronously
+    m_securityManager->checkUrlAsync(url);
+    
+    // Check parental control
+    if (!m_parentalControlManager->isUrlAllowed(url, currentProfileId)) {
+        qDebug() << "URL blocked by parental control:" << url.toString();
+        
+        // Stop loading if currently loading
+        if (m_currentWebView && m_isLoading) {
+            m_currentWebView->stop();
+        }
     }
 }
 

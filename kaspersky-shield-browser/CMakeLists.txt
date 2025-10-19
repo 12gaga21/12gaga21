@@ -23,6 +23,7 @@ set(SOURCES
     src/KsnClient.cpp
     src/AddressBar.cpp
     src/ProfileManager.cpp
+    src/SecuritySettingsDialog.cpp
 )
 
 # Header files
@@ -34,6 +35,8 @@ set(HEADERS
     include/KsnClient.h
     include/AddressBar.h
     include/ProfileManager.h
+    include/SecuritySettingsDialog.h
+    include/CommonTypes.h
 )
 
 # Create executable

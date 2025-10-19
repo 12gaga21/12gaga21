@@ -30,6 +30,8 @@ class SecurityManager;
 class ParentalControlManager;
 class ProfileManager;
 class AddressBar;
+class KsnClient;
+class DatabaseManager;
 
 class MainWindow : public QMainWindow
 {
@@ -38,6 +40,13 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    
+    // Component access
+    KsnClient* ksnClient() const { return m_ksnClient; }
+    DatabaseManager* databaseManager() const { return m_databaseManager; }
+    SecurityManager* securityManager() const { return m_securityManager; }
+    ParentalControlManager* parentalControlManager() const { return m_parentalControlManager; }
+    ProfileManager* profileManager() const { return m_profileManager; }
 
 private slots:
     void navigateToUrl();
@@ -88,6 +97,10 @@ private:
     QProgressBar *m_progressBar;
     QLabel *m_statusLabel;
     
+    // Core components
+    KsnClient *m_ksnClient;
+    DatabaseManager *m_databaseManager;
+    
     // Managers
     SecurityManager *m_securityManager;
     ParentalControlManager *m_parentalControlManager;
@@ -97,6 +110,10 @@ private:
     QTimer *m_statusTimer;
     QWebEngineProfile *m_webProfile;
     bool m_isLoading;
+    
+    // Initialization
+    void initializeComponents();
+    void connectComponents();
 };
 
 #endif // MAINWINDOW_H
