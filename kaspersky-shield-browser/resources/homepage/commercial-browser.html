@@ -643,10 +643,11 @@
                         <span>Защита активна</span>
                     </span>
                 </div>
-                <div class="status-item">v2.5.0</div>
+                <div class="status-item">v1.0.0</div>
+                <div class="status-item latin-text">Securitas Imperialis</div>
             </div>
             <div class="status-right">
-                © 2025 Kaspersky Shield Browser
+                © 2025 Kaspersky Shield Browser <span class="latin-text">• Protectio Perpetua</span>
             </div>
         </div>
     </div>
@@ -700,6 +701,12 @@
         
         // Auto-focus search on page load
         window.addEventListener('load', () => {
+            document.querySelector('.search-input').focus();
+        });
+    </script>
+</body>
+</html>
+ow.addEventListener('load', () => {
             document.querySelector('.search-input').focus();
         });
     </script>
