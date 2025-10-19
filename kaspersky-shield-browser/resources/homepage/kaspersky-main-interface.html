@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaspersky Home Shield Browser - Main Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --kaspersky-primary: #00A88E;
+            --kaspersky-secondary: #00C9A7;
+            --kaspersky-accent: #00D4B3;
+            --kaspersky-dark: #0D1117;
+            --kaspersky-darker: #010409;
+            --kaspersky-panel: #161B22;
+            --kaspersky-border: #30363D;
+            --text-primary: #E6EDF3;
+            --text-secondary: #7D8590;
+            --text-tertiary: #484F58;
+            --danger: #F85149;
+            --warning: #D29922;
+            --success: #3FB950;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--kaspersky-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--kaspersky-darker);
+            border-right: 1px solid var(--kaspersky-border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--kaspersky-border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--kaspersky-primary), var(--kaspersky-secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: rotate-slow 30s linear infinite;
+        }
+        
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        
+        .logo-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        /* Navigation */
+        .nav {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: 24px;
+        }
+        
+        .nav-section-title {
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .nav-item:hover {
+            background: var(--kaspersky-panel);
+            color: var(--text-primary);
+        }
+        
+        .nav-item.active {
+            background: var(--kaspersky-panel);
+            color: var(--kaspersky-primary);
+            border-left: 3px solid var(--kaspersky-primary);
+            padding-left: 9px;
+        }
+        
+        .nav-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            height: 70px;
+            background: var(--kaspersky-darker);
+            border-bottom: 1px solid var(--kaspersky-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--success), #2EA043);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(63, 185, 80, 0.3);
+        }
+        
+        .status-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .status-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.02em;
+        }
+        
+        .top-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-btn-primary {
+            background: linear-gradient(135deg, var(--kaspersky-primary), var(--kaspersky-secondary));
+            color: #000;
+        }
+        
+        .action-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 168, 142, 0.4);
+        }
+        
+        .action-btn-secondary {
+            background: var(--kaspersky-panel);
+            color: var(--text-primary);
+            border: 1px solid var(--kaspersky-border);
+        }
+        
+        .action-btn-secondary:hover {
+            background: var(--kaspersky-dark);
+            border-color: var(--kaspersky-primary);
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        /* Module Card */
+        .module-card {
+            background: var(--kaspersky-panel);
+            border: 1px solid var(--kaspersky-border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--kaspersky-primary), var(--kaspersky-secondary));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .module-card:hover {
+            border-color: var(--kaspersky-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        
+        .module-card:hover::before {
+            opacity: 1;
+        }
+        
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .module-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--kaspersky-darker), var(--kaspersky-dark));
+            border: 1px solid var(--kaspersky-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .module-title {
+            flex: 1;
+        }
+        
+        .module-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .module-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .module-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            background: var(--kaspersky-darker);
+            border-radius: 6px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--kaspersky-primary);
+        }
+        
+        /* Large Status Card */
+        .status-card {
+            background: linear-gradient(135deg, var(--kaspersky-darker), var(--kaspersky-panel));
+            border: 1px solid var(--kaspersky-primary);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-card::after {
+            content: '⚙';
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 200px;
+            opacity: 0.03;
+            animation: rotate-slow 30s linear infinite;
+        }
+        
+        .status-card-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .status-card-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .status-card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success), #2EA043);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 8px 32px rgba(63, 185, 80, 0.4);
+        }
+        
+        .status-card-text {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .status-card-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+        
+        .status-card-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .status-card-latin {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-style: italic;
+            letter-spacing: 0.1em;
+        }
+        
+        .status-card-right {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: right;
+        }
+        
+        .status-metric {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .metric-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--kaspersky-primary);
+            line-height: 1;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Section Title */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--kaspersky-border);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .quick-action {
+            background: var(--kaspersky-panel);
+            border: 1px solid var(--kaspersky-border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .quick-action:hover {
+            background: var(--kaspersky-dark);
+            border-color: var(--kaspersky-primary);
+            transform: translateX(4px);
+        }
+        
+        .quick-action-icon {
+            font-size: 24px;
+        }
+        
+        .quick-action-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Footer Status */
+        .footer-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 32px;
+            background: var(--kaspersky-darker);
+            border-top: 1px solid var(--kaspersky-border);
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .footer-left {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--kaspersky-darker);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--kaspersky-border);
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--kaspersky-primary);
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .badge-success {
+            background: rgba(63, 185, 80, 0.2);
+            color: var(--success);
+        }
+        
+        .badge-warning {
+            background: rgba(210, 153, 34, 0.2);
+            color: var(--warning);
+        }
+        
+        .badge-danger {
+            background: rgba(248, 81, 73, 0.2);
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">⚙</div>
+                    <div class="logo-text">
+                        <div class="logo-title">Kaspersky Shield</div>
+                        <div class="logo-subtitle">Mechanicum Browser</div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Главное</div>
+                    <a href="#" class="nav-item active">
+                        <span class="nav-icon">🏠</span>
+                        <span>Главная</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🌐</span>
+                        <span>Браузер</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span>Статистика</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Защита</div>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🛡️</span>
+                        <span>Безопасность</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🔐</span>
+                        <span>Родительский контроль</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">⚡</span>
+                        <span>Защита от угроз</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Настройки</div>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">👤</span>
+                        <span>Профили</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        <span>Настройки</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🦅</span>
+                        <span>Справка</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="status-indicator">
+                    <div class="status-icon">✓</div>
+                    <div class="status-text">
+                        <div class="status-title">Вы защищены</div>
+                        <div class="status-subtitle">SANCTIFICATUS • Omnissiah Protegit</div>
+                    </div>
+                </div>
+                
+                <div class="top-actions">
+                    <button class="action-btn action-btn-primary">
+                        <span>🔍</span>
+                        <span>Сканировать</span>
+                    </button>
+                    <button class="action-btn action-btn-secondary">
+                        <span>⚙</span>
+                        <span>Обновить</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Large Status Card -->
+                <div class="status-card">
+                    <div class="status-card-content">
+                        <div class="status-card-left">
+                            <div class="status-card-icon">🛡️</div>
+                            <div class="status-card-text">
+                                <div class="status-card-title">Система защищена</div>
+                                <div class="status-card-subtitle">Все системы работают нормально</div>
+                                <div class="status-card-latin">Benedictus Technologica • Machina Sacra</div>
+                            </div>
+                        </div>
+                        <div class="status-card-right">
+                            <div class="status-metric">
+                                <div class="metric-value">1,337</div>
+                                <div class="metric-label">Угроз заблокировано</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="section-title">Быстрые действия</div>
+                <div class="quick-actions">
+                    <a href="#" class="quick-action">
+                        <span class="quick-action-icon">🌐</span>
+                        <span class="quick-action-text">Открыть браузер</span>
+                    </a>
+                    <a href="#" class="quick-action">
+                        <span class="quick-action-icon">📊</span>
+                        <span class="quick-action-text">Просмотр отчетов</span>
+                    </a>
+                    <a href="#" class="quick-action">
+                        <span class="quick-action-icon">🔐</span>
+                        <span class="quick-action-text">Настройки контроля</span>
+                    </a>
+                    <a href="#" class="quick-action">
+                        <span class="quick-action-icon">⚙</span>
+                        <span class="quick-action-text">Параметры</span>
+                    </a>
+                </div>
+                
+                <!-- Dashboard Grid -->
+                <div class="section-title">Модули защиты</div>
+                <div class="dashboard-grid">
+                    <!-- Security Module -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">🛡️</div>
+                            <div class="module-title">
+                                <div class="module-name">Безопасность</div>
+                                <div class="module-status">
+                                    <span class="badge badge-success">Активна</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">Уровень</div>
+                                <div class="stat-value">VIII</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Проверок</div>
+                                <div class="stat-value">8.4K</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Parental Control -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">🔐</div>
+                            <div class="module-title">
+                                <div class="module-name">Родительский контроль</div>
+                                <div class="module-status">
+                                    <span class="badge badge-success">Активен</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">Профилей</div>
+                                <div class="stat-value">3</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Блокировок</div>
+                                <div class="stat-value">142</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Privacy -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">🔒</div>
+                            <div class="module-title">
+                                <div class="module-name">Приватность</div>
+                                <div class="module-status">
+                                    <span class="badge badge-success">Защищена</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">Трекеров</div>
+                                <div class="stat-value">2.1K</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Cookies</div>
+                                <div class="stat-value">856</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Web Shield -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">⚡</div>
+                            <div class="module-title">
+                                <div class="module-name">Web Shield</div>
+                                <div class="module-status">
+                                    <span class="badge badge-success">Работает</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">Фишинг</div>
+                                <div class="stat-value">45</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Malware</div>
+                                <div class="stat-value">12</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sync -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">☁️</div>
+                            <div class="module-title">
+                                <div class="module-name">Синхронизация</div>
+                                <div class="module-status">
+                                    <span class="badge badge-success">Синхронизирован</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">Устройств</div>
+                                <div class="stat-value">4</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Данных</div>
+                                <div class="stat-value">1.2GB</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Updates -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">⚙</div>
+                            <div class="module-title">
+                                <div class="module-name">Обновления</div>
+                                <div class="module-status">
+                                    <span class="badge badge-success">Актуально</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">Версия</div>
+                                <div class="stat-value">2.1.0</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Обновлено</div>
+                                <div class="stat-value">Сегодня</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer Status Bar -->
+            <div class="footer-status">
+                <div class="footer-left">
+                    <div class="footer-item">
+                        <span>⚙</span>
+                        <span>Omnissiah Protegit</span>
+                    </div>
+                    <div class="footer-item">
+                        <span>🛡️</span>
+                        <span>Machina Sacra</span>
+                    </div>
+                    <div class="footer-item">
+                        <span>01001011</span>
+                        <span>Benedictus</span>
+                    </div>
+                </div>
+                <div class="footer-right">
+                    Kaspersky Home Shield Browser v2.1.0 • Mechanicum Edition
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Добавляем интерактивность
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+        
+        document.querySelectorAll('.module-card, .quick-action').forEach(card => {
+            card.addEventListener('click', function() {
+                console.log('Module clicked:', this.querySelector('.module-name, .quick-action-text').textContent);
+            });
+        });
+    </script>
+</body>
+</html>
