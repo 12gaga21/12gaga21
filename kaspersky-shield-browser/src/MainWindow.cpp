@@ -6,6 +6,8 @@
 #include "KsnClient.h"
 #include "DatabaseManager.h"
 #include "SecuritySettingsDialog.h"
+#include "ProfileManagerDialog.h"
+#include "ParentalControlDialog.h"
 #include <QApplication>
 #include <QWebEngineView>
 #include <QWebEnginePage>
@@ -478,16 +480,24 @@ void MainWindow::showSecurityStatus()
 
 void MainWindow::showParentalControl()
 {
-    QMessageBox::information(this, "Parental Control", 
-                           "Parental control settings will be available here.\n"
-                           "Profile management is ready.");
+    if (!m_parentalControlManager || !m_profileManager) {
+        QMessageBox::warning(this, "Ошибка", "Менеджеры не инициализированы");
+        return;
+    }
+    
+    ParentalControlDialog dialog(m_parentalControlManager, m_profileManager, this);
+    dialog.exec();
 }
 
 void MainWindow::showProfileManager()
 {
-    QMessageBox::information(this, "Profile Manager", 
-                           "Profile management will be available here.\n"
-                           "User profiles are ready for configuration.");
+    if (!m_profileManager) {
+        QMessageBox::warning(this, "Ошибка", "ProfileManager не инициализирован");
+        return;
+    }
+    
+    ProfileManagerDialog dialog(m_profileManager, this);
+    dialog.exec();
 }
 
 void MainWindow::onTabCloseRequested(int index)

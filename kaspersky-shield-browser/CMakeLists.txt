@@ -24,6 +24,8 @@ set(SOURCES
     src/AddressBar.cpp
     src/ProfileManager.cpp
     src/SecuritySettingsDialog.cpp
+    src/ProfileManagerDialog.cpp
+    src/ParentalControlDialog.cpp
 )
 
 # Header files
@@ -36,6 +38,8 @@ set(HEADERS
     include/AddressBar.h
     include/ProfileManager.h
     include/SecuritySettingsDialog.h
+    include/ProfileManagerDialog.h
+    include/ParentalControlDialog.h
     include/CommonTypes.h
 )
 
