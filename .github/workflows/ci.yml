@@ -1,0 +1,110 @@
+name: 🛡️ Kaspersky Home Shield Browser CI
+
+on:
+  push:
+    branches: [ main, develop, 'cursor/*' ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        qt-version: ['6.8.3']
+        build-type: ['Debug', 'Release']
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ matrix.qt-version }}
+        modules: 'qtwebengine'
+        
+    - name: 📦 Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          libssl-dev \
+          libsqlite3-dev \
+          libgl1-mesa-dev \
+          libxkbcommon-dev \
+          libxcb-icccm4-dev \
+          libxcb-image0-dev \
+          libxcb-keysyms1-dev \
+          libxcb-randr0-dev \
+          libxcb-render-util0-dev \
+          libxcb-xinerama0-dev \
+          libxcb-xfixes0-dev
+        
+    - name: 🏗️ Configure CMake
+      run: |
+        cd kaspersky-shield-browser
+        cmake -B build -S . \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
+          -DCMAKE_PREFIX_PATH=${{ env.QT_PREFIX }}
+          
+    - name: 🔨 Build project
+      run: |
+        cd kaspersky-shield-browser
+        cmake --build build --parallel $(nproc)
+        
+    - name: 🧪 Run tests
+      run: |
+        cd kaspersky-shield-browser
+        chmod +x scripts/test_webengine.sh
+        chmod +x scripts/test_functionality.sh
+        ./scripts/test_webengine.sh
+        ./scripts/test_functionality.sh
+        
+    - name: 📊 Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results-${{ matrix.build-type }}
+        path: kaspersky-shield-browser/test-results/
+        
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 🔍 Run security scan
+      run: |
+        echo "🔒 Security scan would be implemented here"
+        echo "This could include:"
+        echo "- Static code analysis"
+        echo "- Dependency vulnerability scanning"
+        echo "- Security-focused testing"
+        
+  documentation:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📚 Build documentation
+      run: |
+        echo "📖 Documentation build would be implemented here"
+        echo "This could include:"
+        echo "- Doxygen generation"
+        echo "- Markdown processing"
+        echo "- API documentation"
+        
+    - name: 🚀 Deploy documentation
+      run: |
+        echo "🌐 Documentation deployment would be implemented here"
+        echo "This could deploy to:"
+        echo "- GitHub Pages"
+        echo "- Dedicated documentation site"

@@ -1,0 +1,184 @@
+# Kaspersky Home Shield Browser - .gitignore
+
+# Build directories
+build*/
+build_debug/
+build_release/
+build_test/
+cmake-build-*/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# Qt generated files
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qm
+*.prl
+
+# Qt Creator
+*.autosave
+
+# Executables
+*.exe
+*.app
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.msi
+KasperskyShieldBrowser
+KasperskyShieldBrowser.exe
+
+# Object files
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+
+# Debug files
+*.pdb
+*.ilk
+*.exp
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.backup
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Configuration files (if they contain sensitive data)
+config.ini
+settings.json
+*.conf
+
+# Test artifacts
+test_results/
+coverage/
+*.gcov
+*.gcno
+*.gcda
+
+# Documentation build
+docs/_build/
+docs/build/
+
+# Package files
+*.tar.gz
+*.zip
+*.7z
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# IDE specific
+*.sublime-project
+*.sublime-workspace
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+
+# Qt specific
+*.qmlc
+*.jsc
+object_script.*.Release
+object_script.*.Debug
+*_plugin_import.cpp
+/.qmake.cache
+/.qmake.stash
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qm
+*.prl
+
+# Qt Creator
+*.autosave
+
+# Qt WebEngine
+qtwebengine_devtools_resources.pak
+qtwebengine_resources.pak
+qtwebengine_resources_100p.pak
+qtwebengine_resources_200p.pak
+qtwebengine_resources_extra.pak
+qtwebengine_locales/
+qtwebengine_*.pak
+
+# Kaspersky specific
+*.ksn
+*.kav
+*.kis
+*.ksc
+*.kts
+*.kse
+*.ksd
+*.ksf
+*.ksg
+*.ksh
+*.ksi
+*.ksj
+*.ksk
+*.ksl
+*.ksm
+*.ksn
+*.kso
+*.ksp
+*.ksq
+*.ksr
+*.kss
+*.kst
+*.ksu
+*.ksv
+*.ksw
+*.ksx
+*.ksy
+*.ksz
